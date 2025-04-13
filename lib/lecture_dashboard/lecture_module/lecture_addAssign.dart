@@ -144,7 +144,7 @@ Future<void> validatelecture_addCourse() async {
                           keyboardType: TextInputType.multiline,
                           textAlignVertical: TextAlignVertical.top,
                           style: TextStyle(
-                            color: Colors.white
+                            color: Colors.white 
                           ),
                           decoration: InputDecoration(
                             hintText: "Description of Question",
