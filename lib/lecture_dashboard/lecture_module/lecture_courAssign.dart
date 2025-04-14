@@ -373,7 +373,7 @@ class course_video1_2 extends State<course_video1_1>{
               // width: double.infinity,
               height: 480,
               decoration: BoxDecoration(
-                color: Colors.red
+                // color: Colors.red
               ),
               child: ListView.builder(
                 itemCount: videoControl.length,
@@ -399,7 +399,7 @@ class course_video1_2 extends State<course_video1_1>{
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("The Introduction of data structure and cryptography in these year",
+                                Text("${video_content[index]}",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontFamily: "PlayfairDisplay",
@@ -408,7 +408,7 @@ class course_video1_2 extends State<course_video1_1>{
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 ),
-                                Text("Tutorial 1",
+                                Text("${video_course[index]}",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 11,
