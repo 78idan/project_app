@@ -243,7 +243,9 @@ class course_video1_2 extends State<course_video1_1>{
 
 
 
-  void showBottomPopUp(BuildContext context ){
+  void showBottomPopUp(BuildContext context, int delete_id ){
+    // print(delete_id);
+    int delete_id_Actual = delete_id;
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -286,8 +288,63 @@ class course_video1_2 extends State<course_video1_1>{
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: (){
-                          Navigator.of(context).pop();
+                        onPressed: () async {
+                          // Navigator.of(context).pop();
+                          try{
+                            Dio dio = Dio(
+                              BaseOptions(
+                                connectTimeout: Duration(seconds: 20),
+                                receiveTimeout: Duration(seconds: 20),
+                                headers: {
+                                  "Accept": "*/*"
+                                }
+                              )
+                            );
+
+                            var urlDelete = "http://192.168.249.102/project_app/delete_courVideo.php";
+                            var dataToDelete = {
+                              "delete_id": delete_id_Actual,
+                              "table_name": DataBase_ManagementVideo
+                            };
+
+                            Response response = await dio.post(
+                              urlDelete,
+                              data: FormData.fromMap(dataToDelete)
+                            );
+
+                            if(response.statusCode == 200){
+                              print(response.data);
+                            }
+
+                          }catch(e){
+                            if(e is DioException){
+                              switch(e.type){
+                                case DioExceptionType.connectionTimeout:
+                                     print("connectionTime OUt error: ${e.message}");
+                                     break;
+                                case DioExceptionType.connectionError:
+                                     print("connection error: ${e.message}");
+                                     break;
+                                case DioExceptionType.sendTimeout:
+                                     print("sendtimeout error: ${e.message} ");
+                                     break;
+                                case DioExceptionType.receiveTimeout:
+                                     print("receieve timeout: ${e.message} ");
+                                     break;
+                                case DioExceptionType.cancel:
+                                     print("cancel error: ${e.message} ");
+                                     break;
+                                case DioExceptionType.unknown:
+                                     print("unknown error: ${e.message} ");
+                                     break;
+                                default: 
+                                     print("default error: ${e.message}");
+                                     break;                              
+                              }
+                            }else{
+                              print("else error $e");
+                            }
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green
@@ -420,7 +477,7 @@ class course_video1_2 extends State<course_video1_1>{
                           ),
                           IconButton(
                             onPressed: (){
-                              showBottomPopUp(context);
+                              showBottomPopUp(context,video_id[index]);
                             },
                             icon: Icon(
                               Icons.delete,
