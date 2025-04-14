@@ -314,6 +314,26 @@ class course_video1_2 extends State<course_video1_1>{
 
                             if(response.statusCode == 200){
                               print(response.data);
+                              var receivedData = response.data;
+                              if(receivedData['message'] == "deleted Video"){
+                                int indexToDelete = video_id.indexOf(delete_id_Actual);
+                                if(indexToDelete != -1 ){
+                                  videoControl[indexToDelete].dispose();
+
+                                  videoControl.removeAt(indexToDelete);
+                                  video_course.removeAt(indexToDelete);
+                                  video_content.removeAt(indexToDelete);
+                                  video_id.removeAt(indexToDelete);
+
+                                  setState(() {
+                                    
+                                  });
+                                  Navigator.of(context).pop();
+
+                                }
+                              }else{
+                                print(receivedData['message']);
+                              }
                             }
 
                           }catch(e){
