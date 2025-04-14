@@ -8,25 +8,28 @@ import 'package:dio/dio.dart';
 
 
 
-void main(){
-  runApp(
-    lecture_addCourse1_1()
-  );
-}
+// void main(){
+//   runApp(
+//     lecture_addCourse1_1()
+//   );
+// }
 
-class lecture_addCourse1_1 extends StatelessWidget{
-  @override  
-  Widget build(BuildContext context ){
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: lecture_addCourse1_2(),
-    );
-  }
-}
+// class lecture_addCourse1_1 extends StatelessWidget{
+//   @override  
+//   Widget build(BuildContext context ){
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: lecture_addCourse1_2(),
+//     );
+//   }
+// }
 
 
 
 class lecture_addCourse1_2 extends StatefulWidget{
+  final String DataBase_ManagementVideo;
+  final String IpAdress;
+  lecture_addCourse1_2({ required this.DataBase_ManagementVideo, required this.IpAdress });
   @override  
   lecture_addCourse1_3 createState()=> lecture_addCourse1_3();
 }
@@ -44,7 +47,7 @@ class lecture_addCourse1_3 extends State<lecture_addCourse1_2>{
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
-              lecture_addCourseTextField1_1()
+              lecture_addCourseTextField1_1(DataBase_ManagementVideo: widget.DataBase_ManagementVideo, IpAddress: widget.IpAdress, )
             ],
           ),
         ),
@@ -59,7 +62,7 @@ PreferredSizeWidget lecture_addCourseAppBar(BuildContext context){
     backgroundColor: Color(0xFF002147),
     leading: IconButton(
       onPressed: (){
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(true);
       },
       icon: Icon(
         Icons.arrow_back,
@@ -71,7 +74,9 @@ PreferredSizeWidget lecture_addCourseAppBar(BuildContext context){
 
 
 class lecture_addCourseTextField1_1 extends StatefulWidget{
-  lecture_addCourseTextField1_1();  
+  final String DataBase_ManagementVideo;
+  final String IpAddress;
+  lecture_addCourseTextField1_1({ required this.DataBase_ManagementVideo, required this.IpAddress  });  
   @override  
   lecture_addCourseTextField1_2 createState()=> lecture_addCourseTextField1_2();
 }
@@ -98,7 +103,7 @@ class lecture_addCourseTextField1_2 extends State<lecture_addCourseTextField1_1>
   // end of init state function
   
   ImagePicker videoFilePathActual = ImagePicker();
-  String table_name = "Database Management_video";
+  
 
 //start of validation function
 Future<void> validatelecture_addCourse() async {
@@ -132,7 +137,7 @@ Future<void> requestVideoPermission() async{
 //start function of retrieveing video from phone
 
 Future<void> retrievingVideoPath() async {
-  requestVideoPermission();
+  await requestVideoPermission();
 
   final XFile? videoPath = await videoFilePathActual.pickVideo(
     source: ImageSource.gallery
@@ -153,6 +158,7 @@ Future<void> retrievingVideoPath() async {
 //start function of uploading a video plus it other credentials
 
 Future<void> uploadingVideoCredentials() async {
+  String table_name = widget.DataBase_ManagementVideo;
   try{
     Dio dio = Dio(
       BaseOptions(
@@ -168,8 +174,9 @@ Future<void> uploadingVideoCredentials() async {
       client.badCertificateCallback = (X509Certificate cert, String host,int port)=>true;
       return client;
     };
-
-    var url = "http://192.168.162.102/project_app/lecture_addCourse.php";
+    
+    var IpAddress = widget.IpAddress;
+    var url = "http://$IpAddress/project_app/lecture_addCourse.php";
 
     FormData inputData = FormData.fromMap({
       "video_desc": descriptionVideo.text,

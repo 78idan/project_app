@@ -104,11 +104,18 @@ class course_video1_2 extends State<course_video1_1>{
   bool isLoading =  false; 
   String emptyText = "";
   String DataBase_ManagementVideo = "Database Management_video";
+  String IpAddress = "192.168.33.102";
   List<dynamic> video_content = [];
   List<dynamic> video_course = [];
   List<dynamic> video_id = [];
 
+  // function of retrieving the video from database 
   Future<void> retrieveLectureVideo() async {
+
+    setState(() {
+      isLoading = true;
+    });
+
     try{
       Dio dio = Dio(
         BaseOptions(
@@ -119,7 +126,7 @@ class course_video1_2 extends State<course_video1_1>{
           }
         )
       );
-      var url = "http://192.168.249.102/project_app/lecture_courVideo.php";
+      var url = "http://$IpAddress/project_app/lecture_courVideo.php";
       var dataSend = {
         "Table_name": DataBase_ManagementVideo
       };
@@ -131,6 +138,9 @@ class course_video1_2 extends State<course_video1_1>{
 
       if(response.statusCode == 200){
         print(response.data);
+        setState(() {
+          isLoading = false;
+        });        
         var dataReceived = response.data;
         if(dataReceived['text'] == "NotVideoEmpty"){
           setState(() {
@@ -227,6 +237,7 @@ class course_video1_2 extends State<course_video1_1>{
       }
     }
   }
+  // end function of retrieving the video from database
 
   @override  
   void initState(){
@@ -236,6 +247,9 @@ class course_video1_2 extends State<course_video1_1>{
 
   @override  
   void  dispose(){
+    // for (var videoDisposeControl in videoControl){
+    //   videoDisposeControl.dispose();
+    // }
     super.dispose();
   }
 
@@ -301,7 +315,7 @@ class course_video1_2 extends State<course_video1_1>{
                               )
                             );
 
-                            var urlDelete = "http://192.168.249.102/project_app/delete_courVideo.php";
+                            var urlDelete = "http://192.168.33.102/project_app/delete_courVideo.php";
                             var dataToDelete = {
                               "delete_id": delete_id_Actual,
                               "table_name": DataBase_ManagementVideo
@@ -400,126 +414,143 @@ class course_video1_2 extends State<course_video1_1>{
 
   @override  
   Widget build(BuildContext context ){
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              GestureDetector(
-                onTap: (){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context)=>lecture_addCourse1_2()
-                    )
-                  );
-                },
-                child: CircleAvatar(
-                  radius: 16,
-                  backgroundColor: Colors.white,
-                  child: Icon(
-                    Icons.add,
-                    size: 15,
+    return RefreshIndicator(
+      onRefresh: () async {
+      videoControl.forEach((controller) => controller.dispose());
+      videoControl.clear();
+      video_content.clear();
+      video_course.clear();
+      video_id.clear();
+      await retrieveLectureVideo();
+      },
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                GestureDetector(
+                  onTap: () async {
+                    final result  = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context)=>lecture_addCourse1_2(DataBase_ManagementVideo: DataBase_ManagementVideo,IpAdress: IpAddress,)
+                          )
+                        );
+                    if(result == true){
+                      setState(() {
+                        // retrieveLectureVideo();
+                      });
+                    }    
+                  },
+                  child: CircleAvatar(
+                    radius: 16,
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      Icons.add,
+                      size: 15,
+                    ),
                   ),
+                )
+              ],
+            ),
+            SizedBox(height: 10,),
+            if(isLoading)
+              Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
               )
-            ],
-          ),
-          SizedBox(height: 10,),
-          if(isLoading)
-            Center(
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
-            )
-          else if(emptyText.isNotEmpty)
-            Center(
-              child: Text(emptyText,
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: "PlayfairDisplay",
-                fontSize: 16
-              ),
-              ),
-            )
-          else     
-            Container(
-              // width: double.infinity,
-              height: 480,
-              decoration: BoxDecoration(
-                // color: Colors.red
-              ),
-              child: ListView.builder(
-                itemCount: videoControl.length,
-                itemBuilder: (context,index) {
-                  final controllerVideo2 = videoControl[index];
-                  return Column(
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            height: 60,
-                            width: 70,
-                            child: AspectRatio(
-                              aspectRatio: controllerVideo2.value.aspectRatio,
-                              child: VideoPlayer(controllerVideo2),
+            else if(emptyText.isNotEmpty)
+              Center(
+                child: Text(emptyText,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: "PlayfairDisplay",
+                  fontSize: 16
+                ),
+                ),
+              )
+            else     
+              Container(
+                // width: double.infinity,
+                height: 580,
+                decoration: BoxDecoration(
+                  // color: Colors.red
+                ),
+                child: ListView.builder(
+                  itemCount: videoControl.length,
+                  itemBuilder: (context,index) {
+                    final controllerVideo2 = videoControl[index];
+                    print(videoControl.length);
+                    return Column(
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              height: 60,
+                              width: 70,
+                              child: AspectRatio(
+                                aspectRatio: controllerVideo2.value.aspectRatio,
+                                child: VideoPlayer(controllerVideo2),
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                          width: 5, 
-                          ),
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("${video_content[index]}",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: "PlayfairDisplay",
-                                  fontSize: 14
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                ),
-                                Text("${video_course[index]}",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11,
-                                  fontFamily: "PlayfairDisplay"
-                                ),
-                                )
-                              ],
+                            SizedBox(
+                            width: 5, 
                             ),
-                          ),
-                          IconButton(
-                            onPressed: (){
-                              showBottomPopUp(context,video_id[index]);
-                            },
-                            icon: Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                              size: 20,
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("${video_content[index]}",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: "PlayfairDisplay",
+                                    fontSize: 14
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  ),
+                                  Text("${video_course[index]}",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                    fontFamily: "PlayfairDisplay"
+                                  ),
+                                  )
+                                ],
+                              ),
                             ),
-                          )
-                        ],
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 3),
-                        child: Divider(
-                          color: Colors.white,
-                          thickness: 0.3,
+                            IconButton(
+                              onPressed: (){
+                                showBottomPopUp(context,video_id[index]);
+                              },
+                              icon: Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            )
+                          ],
                         ),
-                      ),
-                    ],
-                  );
-                }
-              ),
-            ),        
-        ],
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 3),
+                          child: Divider(
+                            color: Colors.white,
+                            thickness: 0.3,
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                ),
+              ),        
+          ],
+        ),
       ),
     );
   }
