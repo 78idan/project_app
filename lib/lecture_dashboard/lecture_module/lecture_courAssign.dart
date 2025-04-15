@@ -103,7 +103,7 @@ class course_video1_2 extends State<course_video1_1>{
   // late Future<void> videoInitialize;
   bool isLoading =  false; 
   String emptyText = "";
-  String DataBase_ManagementVideo = "Database Management_video";
+  String DataBase_ManagementVideo = "DataBase Management_video";
   String IpAddress = "192.168.33.102";
   List<dynamic> video_content = [];
   List<dynamic> video_course = [];
@@ -485,7 +485,7 @@ class course_video1_2 extends State<course_video1_1>{
                   itemCount: videoControl.length,
                   itemBuilder: (context,index) {
                     final controllerVideo2 = videoControl[index];
-                    print(videoControl.length);
+                    // print(videoControl.length);
                     return Column(
                       children: [
                         Row(
@@ -566,8 +566,112 @@ class course_assignment1_1 extends StatefulWidget{
 
 class course_assignment1_2 extends State<course_assignment1_1>{
 
+  String IpAddress = "192.168.33.102";
+  String moduleName = "DataBase Management";
 
-  void showAssignmentDelet( BuildContext context ){
+  List<dynamic> nameOfTable = [];
+  List<dynamic> question_note = [];
+  List<dynamic> count = [];
+  String emptyText = "";
+  bool isProgressing = false;
+
+  @override  
+  void initState(){
+    super.initState();
+    requestingData();
+  }
+
+  //start function of requesting data
+
+  Future<void> requestingData() async {
+    setState(() {
+      isProgressing = true;
+    });
+    String table_name = moduleName+"_qu";
+    // print(table_name);
+    try{
+      Dio dio = Dio(
+        BaseOptions(
+          connectTimeout: Duration(seconds: 20),
+          receiveTimeout: Duration(seconds: 20),
+          headers: {
+            "Accept": "*/*"
+          }
+        )
+      );
+      
+      var urlRequestData = "http://${IpAddress}/project_app/lecture_courAssign.php";
+
+      var dataPosted = {
+        "table_name": table_name
+      };
+
+      Response response = await dio.post(
+        urlRequestData,
+        data: FormData.fromMap(dataPosted)
+      );
+
+      if(response.statusCode == 200){
+        setState(() {
+          isProgressing = false;
+        });
+        // print(response.data);
+        var receivedItems = response.data;
+        if(receivedItems['message'] == "No question uploaded" ){
+          setState(() {
+            emptyText = "No question uploaded";
+          });
+        }else{
+          var ItemsReceived = receivedItems['message'];
+          setState(() {
+          for (var ItemsReceived2 in ItemsReceived){
+            nameOfTable.add(ItemsReceived2['table_name']);
+            question_note.add(ItemsReceived2['question_note']);
+            count.add(ItemsReceived2['count']);
+          }          
+          });
+        }
+
+        // print(question_note.length);
+      }
+
+
+    }catch(e){
+      if(e is DioException){
+        switch(e.type){
+          case DioExceptionType.connectionTimeout:
+               print("connection TimeOut: ${e.message}  ");
+               break;
+          case DioExceptionType.connectionError:
+               print("connection Error: ${e.message} ");
+               break;
+          case DioExceptionType.receiveTimeout:
+               print("receieve TimeOut: ${e.message}  ");
+               break;
+          case DioExceptionType.sendTimeout:
+               print("sendTime out: ${e.message} ");
+               break;
+          case DioExceptionType.cancel:
+               print("cancel error: ${e.message} ");
+               break;
+          case DioExceptionType.unknown:
+               print("Unknown error: ${e.message} ");
+               break;
+          default: 
+               print("default error: ${e.message} ");
+               break;                              
+        }
+      }else{
+        print(" else error: $e ");
+      }
+    }
+  }
+
+  //end function of requesting data
+
+
+
+  void showAssignmentDelet( BuildContext context, var tableOfName ){
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -610,8 +714,77 @@ class course_assignment1_2 extends State<course_assignment1_1>{
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: (){
-                          Navigator.of(context).pop();
+                        onPressed: () async {
+                          // print("goods");
+                          // print(tableOfName);
+                          // Navigator.of(context).pop();
+                          try{
+                            Dio dio = Dio(
+                              BaseOptions(
+                                connectTimeout: Duration(seconds: 20),
+                                receiveTimeout: Duration(seconds: 20),
+                                headers: {
+                                  "Accept": "*/*"
+                                }
+                              )
+                            );
+                            var urlDelete = "http://${IpAddress}/project_app/delete_courAssign.php";
+                            var tableDeleted = {
+                              "tableOfName": tableOfName
+                            };
+                            
+                            Response response = await dio.post(
+                              urlDelete,
+                              data: FormData.fromMap(tableDeleted)
+                            );
+
+                            if(response.statusCode == 200){
+                              // print(response.data);
+                              var deletedData = response.data;
+                              if(deletedData['message'] == "Table deleted"){
+                                int indexFound = nameOfTable.indexOf(tableOfName);
+                                if(indexFound != -1){
+                                  nameOfTable.removeAt(indexFound);
+                                  question_note.removeAt(indexFound);
+                                  count.removeAt(indexFound);
+                                  setState(() {
+                                    
+                                  });
+                                  Navigator.of(context).pop();
+                                }
+                              }
+                            }
+
+
+                          }catch(e){
+                            if(e is DioException){
+                              switch(e.type){
+                                case DioExceptionType.connectionTimeout:
+                                    print("connection TimeOut: ${e.message}  ");
+                                    break;
+                                case DioExceptionType.connectionError:
+                                    print("connection Error: ${e.message} ");
+                                    break;
+                                case DioExceptionType.receiveTimeout:
+                                    print("receieve TimeOut: ${e.message}  ");
+                                    break;
+                                case DioExceptionType.sendTimeout:
+                                    print("sendTime out: ${e.message} ");
+                                    break;
+                                case DioExceptionType.cancel:
+                                    print("cancel error: ${e.message} ");
+                                    break;
+                                case DioExceptionType.unknown:
+                                    print("Unknown error: ${e.message} ");
+                                    break;
+                                default: 
+                                    print("default error: ${e.message} ");
+                                    break;                              
+                              }
+                            }else{
+                              print(" else error: $e ");
+                            }                            
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green
@@ -646,217 +819,180 @@ class course_assignment1_2 extends State<course_assignment1_1>{
 
   @override  
   Widget build(BuildContext context){
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              GestureDetector(
-                onTap: (){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context)=>lecture_addAssign1_2()
-                    )
-                  );
-                },
-                child: CircleAvatar(
-                  radius: 16,
-                  backgroundColor: Colors.white,
-                  child: Icon(
-                    Icons.add,
-                    size: 15,
+    return RefreshIndicator(
+      onRefresh: () async {
+        // print("refresh");
+        nameOfTable.clear();
+        question_note.clear();
+        count.clear();
+        await requestingData();
+      },
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                GestureDetector(
+                  onTap: (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context)=>lecture_addAssign1_2()
+                      )
+                    );
+                  },
+                  child: CircleAvatar(
+                    radius: 16,
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      Icons.add,
+                      size: 15,
+                    ),
                   ),
+                )
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            if(isProgressing)
+               Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 1,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
-              )
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text("what skill would you choose to perfect without any effort or time needed for learning? Additionally, how do you think mastering this particular skill would impact your progress, efficiency, and overall success in your academic or professional journey?",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: "PlayfairDisplay",
-                      fontSize: 14,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.02,
-                    ),
-                    Row(
+               )
+            else if(emptyText.isNotEmpty)
+               Center(
+                child: Text(emptyText,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: "PlayfairDisplay"
+                ),
+                ),
+               )
+              else    
+              Container(
+                height: 580,
+                decoration: BoxDecoration(
+                  // color: Colors.red
+                ),
+                child: ListView.builder(
+                  itemCount: question_note.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    
+                    return Column(
                       children: [
-                        Text("Question 1",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: "PlayfairDisplay",
-                          fontSize: 12,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(question_note[index],
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: "PlayfairDisplay",
+                                    fontSize: 14,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                  ),
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height * 0.02,
+                                  ),
+                                  Row(
+                                    children: [
+                                      // Text("Question 1",
+                                      // style: TextStyle(
+                                      //   color: Colors.white,
+                                      //   fontFamily: "PlayfairDisplay",
+                                      //   fontSize: 12,
+                                      // ),
+                                      // ),
+                                      // SizedBox(
+                                      //   width: MediaQuery.of(context).size.width * 0.05,
+                                      // ),
+                                      CircleAvatar(
+                                        radius: 11,
+                                        backgroundColor: Colors.white,
+                                        child: Icon(
+                                          Icons.person,
+                                          size: 16,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width * 0.01 ,
+                                      ),
+                                      Text("${count[index]}",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontFamily: "PlayfairDisplay" 
+                                      ),
+                                      ),
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width * 0.52 ,
+                                      ),
+                                      IconButton(
+                                        onPressed: (){
+                                          // print("View answer");
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => lecture_AssignList1_2(),
+                                            )
+                                          );                                      
+                                        },
+                                        icon: Icon(
+                                          Icons.arrow_forward_ios_outlined,
+                                          size: 17,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: (){
+                                // print("Thank You God");
+                                showAssignmentDelet(context,nameOfTable[index]);
+                              },
+                              icon: Icon(
+                                Icons.delete,
+                                size: 20,
+                                color: Colors.white,
+                              ),
+                            )
+                          ],
                         ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.05,
-                        ),
-                        CircleAvatar(
-                          radius: 11,
-                          backgroundColor: Colors.white,
-                          child: Icon(
-                            Icons.person,
-                            size: 16,
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.01 ,
-                        ),
-                        Text("123",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontFamily: "PlayfairDisplay" 
-                        ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.31 ,
-                        ),
-                        IconButton(
-                          onPressed: (){
-                            print("View answer");
-                          },
-                          icon: Icon(
-                            Icons.arrow_forward_ios_outlined,
-                            size: 17,
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 3),
+                          child: Divider(
                             color: Colors.white,
+                            thickness: 0.3,
                           ),
-                        )
+                        ),                    
                       ],
-                    )
-                  ],
+                    );
+                  }
                 ),
               ),
-              IconButton(
-                onPressed: (){
-                  // print("Thank You God");
-                  showAssignmentDelet(context);
-                },
-                icon: Icon(
-                  Icons.delete,
-                  size: 20,
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 3),
+                child: Divider(
                   color: Colors.white,
+                  thickness: 0.3,
                 ),
-              )
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 3),
-            child: Divider(
-              color: Colors.white,
-              thickness: 0.3,
-            ),
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text("If you had the incredible opportunity to instantly master one specific skill that is directly related to your current projects, studies, or long-term career goals—whether it's in quantum technologies,",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: "PlayfairDisplay",
-                      fontSize: 14,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.02,
-                    ),
-                    Row(
-                      children: [
-                        Text("Question 1",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: "PlayfairDisplay",
-                          fontSize: 12,
-                        ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.05,
-                        ),
-                        CircleAvatar(
-                          radius: 11,
-                          backgroundColor: Colors.white,
-                          child: Icon(
-                            Icons.person,
-                            size: 16,
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.01 ,
-                        ),
-                        Text("123",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontFamily: "PlayfairDisplay" 
-                        ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.31 ,
-                        ),
-                        IconButton(
-                          onPressed: (){
-                            // print("View answer");
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => lecture_AssignList1_2(),
-                              )
-                            );
-                          },
-                          icon: Icon(
-                            Icons.arrow_forward_ios_outlined,
-                            size: 17,
-                            color: Colors.white,
-                          ),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              ),
-              IconButton(
-                onPressed: (){
-                  // print("Thank You God");
-                  showAssignmentDelet(context);
-                },
-                icon: Icon(
-                  Icons.delete,
-                  size: 20,
-                  color: Colors.white,
-                ),
-              )
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 3),
-            child: Divider(
-              color: Colors.white,
-              thickness: 0.3,
-            ),
-          ),          
-        ],
+              ),          
+          ],
+        ),
       ),
     );
   }

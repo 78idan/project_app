@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:dio/dio.dart';
+import 'package:dio/dio.dart';
 
 
 
@@ -80,21 +80,103 @@ class lecture_addAssignTextField1_2 extends State<lecture_addAssignTextField1_1>
   // List<String> levelList = ["Level 4","Level 5","Level 6","Level 7-1","Level 7-2","Level 8"];
   final keyAssignQuestion = GlobalKey<FormState>();
   TextEditingController descriptionQuestion = TextEditingController();
-  TextEditingController questionNum = TextEditingController();
+  TextEditingController questionTag = TextEditingController();
+  String IpAddress = "192.168.33.102";
+  String module_name = "DataBase Management";
 
 //start of validation function
 Future<void> validatelecture_addCourse() async {
   if(descriptionQuestion.text.isEmpty){
      customNotification.notificationCustom(context, message: "Description Question empty");
-  }else if(questionNum.text.isEmpty){
-     customNotification.notificationCustom(context, message: "Question number empty");
+  }else if(questionTag.text.isEmpty || questionTag.text.length > 6){
+     customNotification.notificationCustom(context, message: "Question Tag Invalid");
   }else {
     print("Hello");
+    sendIngData();
   }
 } 
 //end of validation function
 
+//Function of sending data to the database
 
+Future<void> sendIngData() async {
+  String table_name = module_name+"_qu${questionTag.text}";
+  // print(table_name);
+  try{
+    Dio dio = Dio(
+      BaseOptions(
+        connectTimeout: Duration(seconds: 20),
+        receiveTimeout: Duration(seconds: 20),
+        headers: {
+          "Accept": "*/*"
+        }
+      )
+    );
+
+    var url = "http://${IpAddress}/project_app/lecture_addAssign.php";
+
+    var dataSend = {
+      "table_name": table_name,
+      "descriptionQuestion": descriptionQuestion.text,
+    };
+
+    Response response = await dio.post(
+      url,
+      data: FormData.fromMap(dataSend)
+    );
+
+    if(response.statusCode == 200){
+      // print(response.data);
+      var dataReceieved = response.data;
+      // print(dataReceieved['message']);
+      if(dataReceieved['message'] == "Question Uploaded" ){
+        customNotification.notificationCustom(context, message: "Question Uploaded",picIcon: Icon(Icons.check,size: 14,color: Colors.white,));
+        descriptionQuestion.clear();
+        questionTag.clear();
+      }else{
+        customNotification.notificationCustom(context, message: dataReceieved['message']);
+        descriptionQuestion.clear();
+        questionTag.clear();
+      }
+    }
+
+  }catch(e){
+    if(e is DioException){
+      switch(e.type){
+        case DioExceptionType.connectionTimeout:
+             print("connection Timeout Error: ${e.message} ");
+             break;
+        case DioExceptionType.connectionError:
+             print("connectionError: ${e.message} ");
+             break;
+        case DioExceptionType.sendTimeout:
+             print("send TimeOut error: ${e.message} ");
+             break;
+        case DioExceptionType.receiveTimeout:
+             print("receieve timeOut: ${e.message} ");
+             break;
+        case DioExceptionType.cancel:
+             print("cancel error: ${e.message} ");
+             break;
+        case DioExceptionType.unknown:
+             print("unknown error: ${e.message} ");
+             break;
+        default:
+             print("default error: ${e.message} ");
+             break;                              
+      }
+    }else{
+      print("else eror: $e ");
+    }
+  }
+}
+//end Function of sending data to the database
+
+@override  
+void initState(){
+  super.initState();
+  
+}
 
 
   @override  
@@ -173,12 +255,12 @@ Future<void> validatelecture_addCourse() async {
                 ),
                 SizedBox(height: 10,),
                 TextFormField(
-                  controller: questionNum,
+                  controller: questionTag,
                   style: TextStyle(
                     color: Colors.white
                   ),
                   decoration: InputDecoration(
-                    hintText: "@ eg Question 1 ",
+                    hintText: "Tag name(less than 6 letters) ",
                     hintStyle: TextStyle(
                       color: Colors.white70
                     ),
@@ -193,11 +275,11 @@ Future<void> validatelecture_addCourse() async {
                       borderSide: BorderSide.none
                     ),
                     prefixIcon: Icon(
-                      Icons.notes,
+                      Icons.device_hub_outlined,
                       color: Colors.grey[400],
                     )
                   ),
-                ),                                 
+                ),                
                 SizedBox(height: 15,),                              
                 Row(
                   children: [
