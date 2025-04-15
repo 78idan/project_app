@@ -315,7 +315,7 @@ class course_video1_2 extends State<course_video1_1>{
                               )
                             );
 
-                            var urlDelete = "http://192.168.33.102/project_app/delete_courVideo.php";
+                            var urlDelete = "http://${IpAddress}/project_app/delete_courVideo.php";
                             var dataToDelete = {
                               "delete_id": delete_id_Actual,
                               "table_name": DataBase_ManagementVideo
