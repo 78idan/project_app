@@ -247,9 +247,9 @@ class course_video1_2 extends State<course_video1_1>{
 
   @override  
   void  dispose(){
-    // for (var videoDisposeControl in videoControl){
-    //   videoDisposeControl.dispose();
-    // }
+    for (var videoDisposeControl in videoControl){
+      videoDisposeControl.dispose();
+    }
     super.dispose();
   }
 
@@ -586,6 +586,7 @@ class course_assignment1_2 extends State<course_assignment1_1>{
   Future<void> requestingData() async {
     setState(() {
       isProgressing = true;
+      emptyText = "";
     });
     String table_name = moduleName+"_qu";
     // print(table_name);
@@ -614,12 +615,13 @@ class course_assignment1_2 extends State<course_assignment1_1>{
       if(response.statusCode == 200){
         setState(() {
           isProgressing = false;
+          emptyText = "";
         });
         // print(response.data);
         var receivedItems = response.data;
         if(receivedItems['message'] == "No question uploaded" ){
           setState(() {
-            emptyText = "No question uploaded";
+            emptyText = "No question uploaded  ";
           });
         }else{
           var ItemsReceived = receivedItems['message'];
@@ -840,7 +842,7 @@ class course_assignment1_2 extends State<course_assignment1_1>{
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context)=>lecture_addAssign1_2()
+                        builder: (context)=>lecture_addAssign1_2(OriginalIpAdrress: IpAddress, module_name: moduleName,)
                       )
                     );
                   },

@@ -22,7 +22,11 @@ import 'package:dio/dio.dart';
 
 
 class lecture_addAssign1_2 extends StatefulWidget{
-  @override  
+    
+  final String OriginalIpAdrress;
+  final String module_name;
+  lecture_addAssign1_2({required this.OriginalIpAdrress, required this.module_name});
+  @override
   lecture_addAssign1_3 createState()=> lecture_addAssign1_3();
 }
 
@@ -39,7 +43,7 @@ class lecture_addAssign1_3 extends State<lecture_addAssign1_2>{
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
-              lecture_addAssignTextField1_1()
+              lecture_addAssignTextField1_1(OriginalIpAdrress: widget.OriginalIpAdrress,module_name: widget.module_name,)
             ],
           ),
         ),
@@ -66,7 +70,9 @@ PreferredSizeWidget lecture_addAssignAppBar(BuildContext context){
 
 
 class lecture_addAssignTextField1_1 extends StatefulWidget{
-  lecture_addAssignTextField1_1();  
+  final String OriginalIpAdrress;
+  final String module_name;
+  lecture_addAssignTextField1_1( { required this.OriginalIpAdrress, required this.module_name} );  
   @override  
   lecture_addAssignTextField1_2 createState()=> lecture_addAssignTextField1_2();
 }
@@ -81,8 +87,8 @@ class lecture_addAssignTextField1_2 extends State<lecture_addAssignTextField1_1>
   final keyAssignQuestion = GlobalKey<FormState>();
   TextEditingController descriptionQuestion = TextEditingController();
   TextEditingController questionTag = TextEditingController();
-  String IpAddress = "192.168.33.102";
-  String module_name = "DataBase Management";
+  
+  
 
 //start of validation function
 Future<void> validatelecture_addCourse() async {
@@ -91,7 +97,7 @@ Future<void> validatelecture_addCourse() async {
   }else if(questionTag.text.isEmpty || questionTag.text.length > 6){
      customNotification.notificationCustom(context, message: "Question Tag Invalid");
   }else {
-    print("Hello");
+    // print("Hello");
     sendIngData();
   }
 } 
@@ -100,6 +106,8 @@ Future<void> validatelecture_addCourse() async {
 //Function of sending data to the database
 
 Future<void> sendIngData() async {
+  String IpAddress = widget.OriginalIpAdrress;
+  String module_name = widget.module_name;
   String table_name = module_name+"_qu${questionTag.text}";
   // print(table_name);
   try{
