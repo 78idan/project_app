@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:project_app/lecture_dashboard/lecture_module/lecture_AssignView.dart';
+import 'package:dio/dio.dart';
 
+void main(){
+  runApp(
+    lecture_AssignList1_1()
+  );
+}
 
-// void main(){
-//   runApp(
-//     lecture_AssignList1_1()
-//   );
-// }
-
-// class lecture_AssignList1_1 extends StatelessWidget{
-//   @override  
-//   Widget build(BuildContext context ){
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       home: lecture_AssignList1_2(),
-//     );
-//   }
-// }
+class lecture_AssignList1_1 extends StatelessWidget{
+  @override  
+  Widget build(BuildContext context ){
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: lecture_AssignList1_2(),
+    );
+  }
+}
 
 
 
@@ -66,6 +66,67 @@ class lectureAssignListContainer1_1 extends StatefulWidget{
 }
 
 class lectureAssignListContainer1_2 extends State<lectureAssignListContainer1_1>{
+
+  String tableOfName = "DataBase Management_qualot";
+  //start of function of requesting data
+  Future<void> requestingData() async {
+    try{
+      Dio dio = Dio(
+        BaseOptions(
+          connectTimeout: Duration(seconds: 20),
+          receiveTimeout: Duration(seconds: 20),
+          headers: {
+            "Accept": "*/*"
+          }
+        )
+      );
+      var IpAddress = "192.168.33.102";
+      var urlRequestingData = "http://${IpAddress}/project_app/lecture_AssignList.php";
+      var dataSend = {
+        "tableOfName": tableOfName
+      };
+
+      Response response = await dio.post(
+        urlRequestingData,
+        data: FormData.fromMap(dataSend)
+      );
+
+      if(response.statusCode == 200){
+        print(response.data);
+      }
+
+    }catch(e){
+      if(e is DioException){
+        switch(e.type){
+          case DioExceptionType.connectionTimeout:
+              print("connection Timeout Error: ${e.message} ");
+              break;
+          case DioExceptionType.connectionError:
+              print("connectionError: ${e.message} ");
+              break;
+          case DioExceptionType.sendTimeout:
+              print("send TimeOut error: ${e.message} ");
+              break;
+          case DioExceptionType.receiveTimeout:
+              print("receieve timeOut: ${e.message} ");
+              break;
+          case DioExceptionType.cancel:
+              print("cancel error: ${e.message} ");
+              break;
+          case DioExceptionType.unknown:
+              print("unknown error: ${e.message} ");
+              break;
+          default:
+              print("default error: ${e.message} ");
+              break;                              
+        }
+      }else{
+        print("else eror: $e ");
+      }      
+    }
+  }
+  //end of function of requesting data
+
   @override  
   Widget build(BuildContext context ){
     return Column(
