@@ -5,31 +5,36 @@ import 'package:project_app/lecture_dashboard/lecture_module/lecture_addAssign.d
 import 'package:project_app/lecture_dashboard/lecture_module/lecture_addCourse.dart';
 import 'package:video_player/video_player.dart';
 
-void main(){
-  runApp(
-    lecture_courAssign1_1()
-  );
-}
+// void main(){
+//   runApp(
+//     lecture_courAssign1_1()
+//   );
+// }
 
-class lecture_courAssign1_1 extends StatelessWidget{
-  @override  
-  Widget build(BuildContext context ){
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: lecture_courAssign1_2(),
-    );
-  }
-}
+// class lecture_courAssign1_1 extends StatelessWidget{
+//   @override  
+//   Widget build(BuildContext context ){
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: lecture_courAssign1_2(),
+//     );
+//   }
+// }
 
 
 
 class lecture_courAssign1_2 extends StatefulWidget{
+  final String module_name;
+  final String IpAddress;
+  lecture_courAssign1_2({ required this.module_name, required this.IpAddress });  
   @override  
   lecture_courAssign1_3 createState()=> lecture_courAssign1_3();
 }
 
 
 class lecture_courAssign1_3 extends State<lecture_courAssign1_2>{
+
+  
   @override  
   Widget build(BuildContext context ){
     return DefaultTabController(
@@ -41,11 +46,11 @@ class lecture_courAssign1_3 extends State<lecture_courAssign1_2>{
           children: [
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-              child: course_video1_1(),
+              child: course_video1_1(module_name: widget.module_name, IpAddress: widget.IpAddress),
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-              child: course_assignment1_1(),
+              child: course_assignment1_1(module_name: widget.module_name, IpAddress: widget.IpAddress),
             )
           ],
         ),
@@ -94,6 +99,9 @@ PreferredSizeWidget lecture_courAssignAppBar( BuildContext context ){
 
 
 class course_video1_1 extends StatefulWidget{
+  final String module_name;
+  final String IpAddress;
+  course_video1_1({  required this.module_name, required this.IpAddress  });
   @override  
   course_video1_2 createState()=> course_video1_2();
 }
@@ -103,20 +111,26 @@ class course_video1_2 extends State<course_video1_1>{
   // late Future<void> videoInitialize;
   bool isLoading =  false; 
   String emptyText = "";
-  String DataBase_ManagementVideo = "DataBase Management_video";
-  String IpAddress = "192.168.33.102";
+  String module_name2 = "";
+
   List<dynamic> video_content = [];
   List<dynamic> video_course = [];
   List<dynamic> video_id = [];
 
   // function of retrieving the video from database 
   Future<void> retrieveLectureVideo() async {
-
+  String module_name = widget.module_name+"_video";
+  setState(() {
+    module_name2 = module_name;
+  });
+  String IpAddress = widget.IpAddress;
     setState(() {
       isLoading = true;
+      emptyText = "";
     });
 
     try{
+      print(module_name);
       Dio dio = Dio(
         BaseOptions(
           connectTimeout: Duration(seconds: 20),
@@ -126,9 +140,9 @@ class course_video1_2 extends State<course_video1_1>{
           }
         )
       );
-      var url = "http://$IpAddress/project_app/lecture_courVideo.php";
+      var url = "http://${IpAddress}/project_app/lecture_courVideo.php";
       var dataSend = {
-        "Table_name": DataBase_ManagementVideo
+        "Table_name": module_name
       };
 
       Response response = await dio.post(
@@ -140,6 +154,7 @@ class course_video1_2 extends State<course_video1_1>{
         print(response.data);
         setState(() {
           isLoading = false;
+          emptyText = "";
         });        
         var dataReceived = response.data;
         if(dataReceived['text'] == "NotVideoEmpty"){
@@ -198,7 +213,7 @@ class course_video1_2 extends State<course_video1_1>{
           }
         }else{
           setState(() {
-            isLoading = false;
+            // isLoading = false;
             emptyText = "No Video Uploaded";
           });
         }
@@ -315,10 +330,10 @@ class course_video1_2 extends State<course_video1_1>{
                               )
                             );
 
-                            var urlDelete = "http://${IpAddress}/project_app/delete_courVideo.php";
+                            var urlDelete = "http://${widget.IpAddress}/project_app/delete_courVideo.php";
                             var dataToDelete = {
                               "delete_id": delete_id_Actual,
-                              "table_name": DataBase_ManagementVideo
+                              "table_name": module_name2
                             };
 
                             Response response = await dio.post(
@@ -436,7 +451,7 @@ class course_video1_2 extends State<course_video1_1>{
                     final result  = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context)=>lecture_addCourse1_2(DataBase_ManagementVideo: DataBase_ManagementVideo,IpAdress: IpAddress,)
+                            builder: (context)=>lecture_addCourse1_2(DataBase_ManagementVideo: module_name2,IpAdress: widget.IpAddress,)
                           )
                         );
                     if(result == true){
@@ -560,14 +575,17 @@ class course_video1_2 extends State<course_video1_1>{
 }
 
 class course_assignment1_1 extends StatefulWidget{
+  final String module_name;
+  final String IpAddress;
+  course_assignment1_1({ required this.module_name, required this.IpAddress  });
   @override  
   course_assignment1_2 createState()=> course_assignment1_2();
 }
 
 class course_assignment1_2 extends State<course_assignment1_1>{
 
-  String IpAddress = "192.168.33.102";
-  String moduleName = "DataBase Management";
+  // String IpAddress = "192.168.33.102";
+  // String moduleName = "DataBase Management";
 
   List<dynamic> nameOfTable = [];
   List<dynamic> question_note = [];
@@ -588,7 +606,7 @@ class course_assignment1_2 extends State<course_assignment1_1>{
       isProgressing = true;
       emptyText = "";
     });
-    String table_name = moduleName+"_qu";
+    String table_name = widget.module_name+"_qu";
     // print(table_name);
     try{
       Dio dio = Dio(
@@ -601,7 +619,7 @@ class course_assignment1_2 extends State<course_assignment1_1>{
         )
       );
       
-      var urlRequestData = "http://${IpAddress}/project_app/lecture_courAssign.php";
+      var urlRequestData = "http://${widget.IpAddress}/project_app/lecture_courAssign.php";
 
       var dataPosted = {
         "table_name": table_name
@@ -730,7 +748,7 @@ class course_assignment1_2 extends State<course_assignment1_1>{
                                 }
                               )
                             );
-                            var urlDelete = "http://${IpAddress}/project_app/delete_courAssign.php";
+                            var urlDelete = "http://${widget.IpAddress}/project_app/delete_courAssign.php";
                             var tableDeleted = {
                               "tableOfName": tableOfName
                             };
@@ -842,7 +860,7 @@ class course_assignment1_2 extends State<course_assignment1_1>{
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context)=>lecture_addAssign1_2(OriginalIpAdrress: IpAddress, module_name: moduleName,)
+                        builder: (context)=>lecture_addAssign1_2(OriginalIpAdrress: widget.IpAddress, module_name: widget.module_name,)
                       )
                     );
                   },
@@ -946,7 +964,7 @@ class course_assignment1_2 extends State<course_assignment1_1>{
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => lecture_AssignList1_2(),
+                                              builder: (context) => lecture_AssignList1_2(nameOfTable: nameOfTable[index], IpAddress: widget.IpAddress),
                                             )
                                           );                                      
                                         },

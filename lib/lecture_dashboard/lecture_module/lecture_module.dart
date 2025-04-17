@@ -2,25 +2,26 @@
 
 // import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
+import 'package:project_app/lecture_dashboard/lecture_module/lecture_courAssign.dart';
 
 import 'package:dio/dio.dart';
 
 
-// void main(){
-//   runApp(
-//     lecture_module1_1()
-//   );
-// }
+void main(){
+  runApp(
+    lecture_module1_1()
+  );
+}
 
-// class lecture_module1_1 extends StatelessWidget{
-//   @override  
-//   Widget build(BuildContext context ){
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       home: lecture_module1_2(),
-//     );
-//   }
-// }
+class lecture_module1_1 extends StatelessWidget{
+  @override  
+  Widget build(BuildContext context ){
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: lecture_module1_2(),
+    );
+  }
+}
 
 
 
@@ -76,6 +77,7 @@ class lectureModuleContainer1_1 extends StatefulWidget{
 }
 
 class lectureModuleContainer1_2 extends State<lectureModuleContainer1_1>{
+  String ipAddress = "192.168.33.102";
    
   String lecture_admissionNumber = "22050513037";
   var modulesReceived = [];
@@ -108,8 +110,8 @@ class lectureModuleContainer1_2 extends State<lectureModuleContainer1_1>{
       //   return client;
       // };
 
-      // var ipAddress = "192.168.27.102";
-      var url = "http://192.168.93.102/project_app/lecture_module.php";
+      
+      var url = "http://${ipAddress}/project_app/lecture_module.php";
       var dataSent = {
         "lecture_admissionNumber": lecture_admissionNumber
       };
@@ -254,12 +256,12 @@ class lectureModuleContainer1_2 extends State<lectureModuleContainer1_1>{
                               GestureDetector(
                                 onTap: (){
                                   print("Let us go");
-                                  // Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //     builder: (context)=> lecture_courAssign1_2()
-                                  //   )
-                                  // );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context)=> lecture_courAssign1_2(module_name: modulesReceived[index], IpAddress: ipAddress)
+                                    )
+                                  );
                                 },
                                 child: Icon(
                                   Icons.arrow_forward_ios,
