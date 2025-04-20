@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project_app/lecture_dashboard/lecture_module/lecture_module.dart';
-
+import 'package:dio/dio.dart';
 
 // void main(){
 //   runApp(
@@ -20,6 +20,9 @@ import 'package:project_app/lecture_dashboard/lecture_module/lecture_module.dart
 
 
 class lecture_home1_2 extends StatefulWidget{
+  final String admission_number;
+  final String IpAddress;
+  lecture_home1_2({ required this.admission_number, required this.IpAddress });
   @override  
   lecture_home1_3 createState()=> lecture_home1_3();
 }
@@ -27,8 +30,13 @@ class lecture_home1_2 extends StatefulWidget{
 
 class lecture_home1_3 extends State<lecture_home1_2>{
 
+  String first_name = "";
+  String last_name = "";
+  String role = "";
+
   String lecture_admissionNumber = "22050513037";
 
+  // start list container function
   List<Widget> gridContainers(BuildContext context){
     return [
       GestureDetector(
@@ -37,7 +45,7 @@ class lecture_home1_3 extends State<lecture_home1_2>{
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => lecture_module1_2(),
+              builder: (context) => lecture_module1_2(admission_number: widget.admission_number, IpAddress: widget.IpAddress),
             )
           );
         },
@@ -97,7 +105,86 @@ class lecture_home1_3 extends State<lecture_home1_2>{
       )      
     ];
   }
+  // end list container function
 
+  // start initState function
+  void initState(){
+    super.initState();
+    retrieveName();
+  }
+  // end initState function
+
+
+  //start of function to retrieve fname and lname
+  Future<void> retrieveName() async {
+    try{
+      Dio dio = Dio(
+        BaseOptions(
+          connectTimeout: Duration(seconds: 20),
+          receiveTimeout: Duration(seconds: 20),
+          headers: {
+            "Accept": "*/*"
+          }
+        )
+      );
+
+      var dataSend = {
+        "admission_number": widget.admission_number,
+      };
+
+      var UrlDataSend = "http://${widget.IpAddress}/project_app/lecture_home.php";
+
+      Response response = await dio.post(
+        UrlDataSend,
+        data: FormData.fromMap(dataSend)
+      );
+
+      if(response.statusCode == 200){
+        // print(response.data);
+        var dataRetrived = response.data;
+        if(dataRetrived['message'] == "Data retrieved"){
+          setState((){
+            first_name = dataRetrived['fname'];
+            last_name = dataRetrived['lname'];
+            role = dataRetrived['role'];
+          });
+        }
+      }
+
+    }catch(e){
+      if(e is DioException){
+        switch(e.type){
+          case DioExceptionType.connectionTimeout:
+               print("connectionTimeOut : ${e.message}");
+               break;
+          case DioExceptionType.connectionError:
+               print("connectionError: ${e.message} ");
+               break;
+          case DioExceptionType.sendTimeout:
+               print("sendTimeOut: ${e.message}");
+               break;
+          case DioExceptionType.receiveTimeout:
+               print("receive TimeOut: ${e.message} ");
+               break;
+          case DioExceptionType.badCertificate:
+               print("certificate: ${e.message} ");
+               break;
+          case DioExceptionType.badResponse:
+               print("bad response: ${e.message} ");
+               break;
+          case DioExceptionType.unknown:
+               print("Unknown error: ${e.message} ");
+               break;
+          default:
+               print("default error: ${e.message} ");
+               break;                                    
+        }
+      }else{
+        print("else error: $e");
+      }
+    }
+  } 
+  //end of function to retrieve fname and lname
   @override  
   Widget build(BuildContext context){
 
@@ -123,14 +210,14 @@ class lecture_home1_3 extends State<lecture_home1_2>{
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("James Mariki",
+                    Text(first_name+" "+ last_name,
                     style: TextStyle(
                       fontSize: 14,
                       fontFamily: "PlayfairDisplay",
                       color: Colors.white
                     ),
                     ),
-                    Text("Lecture",
+                    Text(role,
                     style: TextStyle(
                       fontFamily: "PlayfairDisplay",
                       fontSize: 15,

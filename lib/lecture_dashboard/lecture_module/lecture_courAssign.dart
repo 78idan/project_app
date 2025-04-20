@@ -280,6 +280,7 @@ class course_video1_2 extends State<course_video1_1>{
       barrierDismissible: true,
       barrierLabel: "",
       transitionDuration: Duration(milliseconds: 300),
+      
       pageBuilder: (context,admin1, admin2 ){
         return Align(
           alignment: Alignment.bottomCenter,

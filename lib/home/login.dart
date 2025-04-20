@@ -3,6 +3,7 @@ import 'package:project_app/home/forgor_password.dart';
 import 'package:project_app/home/sign_up.dart';
 import 'package:project_app/admin_dashboard/admin_dashboard2.dart';
 import 'package:dio/dio.dart';
+import 'package:project_app/lecture_dashboard/lecture_dashboard2.dart';
 
 // void main(){
 //   runApp(
@@ -92,7 +93,7 @@ class form1_1 extends State<form1>{
   String ErrorText="";
   TextEditingController admissionController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  var IpAddress = "192.168.84.102";
+  var IpAddress = "192.168.102.102";
 
   bool isbscure = true;
   //starting of function of validation
@@ -141,11 +142,18 @@ class form1_1 extends State<form1>{
         // print(response.data);
         var receiveData = response.data;
 
-        if(receiveData['message'] == "Thank You God"){
+        if(receiveData['message'] == "student"){
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context)=>admin_dashboard1_2(IpAddress: IpAddress, admission_number: admissionController.text,)
+            )
+          );
+        }else if(receiveData['message'] == "lecture"){
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context)=>lecture_dashboard2_2(IpAddress: IpAddress , admission_number: admissionController.text, )
             )
           );
         }else{

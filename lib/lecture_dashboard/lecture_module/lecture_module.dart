@@ -7,25 +7,30 @@ import 'package:project_app/lecture_dashboard/lecture_module/lecture_courAssign.
 import 'package:dio/dio.dart';
 
 
-void main(){
-  runApp(
-    lecture_module1_1()
-  );
-}
+// void main(){
+//   runApp(
+//     lecture_module1_1()
+//   );
+// }
 
-class lecture_module1_1 extends StatelessWidget{
-  @override  
-  Widget build(BuildContext context ){
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: lecture_module1_2(),
-    );
-  }
-}
+// class lecture_module1_1 extends StatelessWidget{
+//   @override  
+//   Widget build(BuildContext context ){
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: lecture_module1_2(),
+//     );
+//   }
+// }
 
 
 
 class lecture_module1_2 extends StatefulWidget{
+
+  final String admission_number;
+  final String IpAddress;
+
+  lecture_module1_2({ required this.admission_number, required this.IpAddress });
   
   @override  
   lecture_module1_3 createState()=> lecture_module1_3();
@@ -44,7 +49,7 @@ class lecture_module1_3 extends State<lecture_module1_2>{
         padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
-          child: lectureModuleContainer1_1()
+          child: lectureModuleContainer1_1(admission_number: widget.admission_number, IpAddress: widget.IpAddress)
         ),
       ),
     );
@@ -70,16 +75,19 @@ PreferredSizeWidget lectureModuleAppBar( BuildContext context ){
 
 class lectureModuleContainer1_1 extends StatefulWidget{
   
+   final String admission_number;
+   final String IpAddress;
 
+   lectureModuleContainer1_1({ required this.admission_number, required this.IpAddress  });
 
   @override  
   lectureModuleContainer1_2 createState()=> lectureModuleContainer1_2();
 }
 
 class lectureModuleContainer1_2 extends State<lectureModuleContainer1_1>{
-  String ipAddress = "192.168.33.102";
+  // String ipAddress = "192.168.33.102";
    
-  String lecture_admissionNumber = "22050513037";
+  // String lecture_admissionNumber = "22050513037";
   var modulesReceived = [];
   var countReceived = [];
 
@@ -95,8 +103,11 @@ class lectureModuleContainer1_2 extends State<lectureModuleContainer1_1>{
 
   
 
-
+  // start of function of retrieveing module
   Future<void> retrieve_Module() async {
+  String ipAddress = widget.IpAddress;
+   
+  String lecture_admissionNumber = widget.admission_number;    
     try{
       Dio dio = Dio(
         BaseOptions(
@@ -175,6 +186,7 @@ class lectureModuleContainer1_2 extends State<lectureModuleContainer1_1>{
       }
     }
   }
+  // end of function of retrieveing module
 
   @override  
   Widget build(BuildContext context ){
@@ -259,7 +271,7 @@ class lectureModuleContainer1_2 extends State<lectureModuleContainer1_1>{
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context)=> lecture_courAssign1_2(module_name: modulesReceived[index], IpAddress: ipAddress)
+                                      builder: (context)=> lecture_courAssign1_2(module_name: modulesReceived[index], IpAddress: widget.IpAddress)
                                     )
                                   );
                                 },
