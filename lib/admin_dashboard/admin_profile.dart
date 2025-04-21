@@ -36,6 +36,7 @@ class admin_profile1_3 extends State<admin_profile1_2>{
       body: Padding(
         padding: EdgeInsets.fromLTRB(15, 25, 15, 0),
         child: Column(
+          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.17,
@@ -246,7 +247,7 @@ class profileContainer1_2 extends State<profileContainer1_1>{
                       )
                     );
                   },
-                  child: Text("Log Out                 ",
+                  child: Text("Log Out",
                   style: TextStyle(
                     color: Colors.white70,
                     fontSize: 18,

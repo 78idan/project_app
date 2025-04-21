@@ -38,7 +38,7 @@ class lecture_dashboard2_3 extends State<lecture_dashboard2_2>{
   Widget build(BuildContext context ){
   List<Widget> lecturePages = [
     lecture_home1_2(admission_number: widget.admission_number,  IpAddress: widget.IpAddress,),
-    lecture_profile1_2()
+    lecture_profile1_2(admission_number: widget.admission_number, IpAddress: widget.IpAddress)
   ];    
     return Scaffold(
       backgroundColor: Color(0xFF002147),
