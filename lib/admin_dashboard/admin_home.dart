@@ -46,7 +46,7 @@ class admmin_home1_3 extends State<admmin_home1_2>{
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context)=> adminRegisterStudent1_2()
+                builder: (context)=> adminRegisterStudent1_2(IpAddress: widget.IpAddress)
               )
             );            
           },

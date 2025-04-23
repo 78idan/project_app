@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:project_app/student/student_module/student_answer.dart';
-
+import 'package:dio/dio.dart';
+import 'package:project_app/student/student_module/view/student_view.dart';
 void main(){
   runApp(
     student_courAssign1_1()
@@ -97,265 +98,349 @@ class course_video1_1 extends StatefulWidget{
 
 class course_video1_2 extends State<course_video1_1>{
   late VideoPlayerController videoControlstudent1;
+  List<VideoPlayerController> controlVideo = [];
+  List<dynamic> video_content = [];
+  List<dynamic> video_id = [];
+  List<dynamic> video_name = [];
+  List<dynamic> video_course = [];
+  List<dynamic> videoName2 = [];
+  String errorText = "";
+  //start of variable of special cases that have filled the parameterers of student_viewVideo1_2() function
+  String table_name2 = "";
+  String IpAddress = "192.168.224.102";
+  //end of variable of special cases that have filled the parameterers of student_viewVideo1_2() function
+  bool isLoading = false;
   late Future<void> videoInitializestudent1;
   late VideoPlayerController videoControlstudent2;
   late Future<void> videoInitializestudent2;  
 
+@override  
+void  dispose(){
+  for (var disposeControlVideo in controlVideo){
+    disposeControlVideo.dispose();
+  }    
+  super.dispose();
+ }
+
   @override  
   void initState(){
     super.initState();
-    videoControlstudent1 = VideoPlayerController.asset("assets/gpt.mp4");
-    videoInitializestudent1 = videoControlstudent1.initialize();
-    videoControlstudent1.setLooping(false);
-    videoControlstudent1.addListener(videoEnd);
-
-    videoControlstudent2 = VideoPlayerController.asset("assets/cleaning.mp4");
-    videoInitializestudent2 = videoControlstudent2.initialize();
-    videoControlstudent2.setLooping(false);
+    retrieveVideo();
 
 
   }
 
-  @override  
-  void  dispose(){
-    videoControlstudent1.removeListener(videoEnd);
-    videoControlstudent1.dispose();
-    super.dispose();
-  }
 
 
-  void videoEnd(){
-    if(videoControlstudent1.value.position == videoControlstudent1.value.duration ){
+
+    //start of function to retrieve the video according to module name
+    Future<void> retrieveVideo() async{
+      String module_name = "DataBase Management"+"_video";
       setState(() {
-        videoControlstudent1.seekTo(Duration.zero);
+        isLoading = true;
+        errorText = "";
+        table_name2 = module_name;
       });
-    }
-  }
+      try{
+        Dio dio = Dio(
+          BaseOptions(
+            connectTimeout: Duration(seconds: 20),
+            receiveTimeout: Duration(seconds: 20),
+            headers: {
+              "Accept": "*/*"
+            }
+          )
+        );
+        print(module_name);
+        var IpAddress = "192.168.126.102";
+        var dataSend = {
+          "Table_name": module_name
+        };
+        var urlDataSend = "http://${IpAddress}/project_app/student_courAssign.php";
+        Response response = await dio.post(
+          urlDataSend,
+          data: FormData.fromMap(dataSend)
+        );
+
+        if(response.statusCode == 200){
+          setState(() {
+            isLoading = false;
+            errorText = "";
+          });
+          print(response.data);
+          var videoData = response.data;
+          if(videoData['message'] == "No video Uploaded"){
+            setState(() {
+              errorText = "No video Uploaded";
+            });
+          }else{
+            var dataVideo = videoData['main'];
+            List<dynamic> videoName = [];
+            setState(() {
+              for( var dataVideo2 in dataVideo ){
+                videoName.add(dataVideo2['video_name']);
+                videoName2.add(dataVideo2['video_name']);
+                video_content.add(dataVideo2['video_content']);
+                video_course.add(dataVideo2['video_course']);
+                video_id.add(dataVideo2['video_id']);
+              }
+            });
+
+            for(var videoName2 in videoName){
+              try{
+                final UriData = await Uri.parse(videoName2);
+                if(!UriData.hasScheme || UriData.host.isEmpty){
+                  throw Exception("The host or scheme are not available");
+                }
+
+                final videoDataControl = await VideoPlayerController.networkUrl(UriData);
+                
+                videoDataControl.addListener((){
+                  if(videoDataControl.value.hasError){
+                    print("THere is an error ${videoDataControl.value.errorDescription} ");
+                  }
+                });
+                await videoDataControl.initialize();
+
+                controlVideo.add(videoDataControl);
+                print("The video is initialized");
+
+                if(mounted){
+                  setState(() {
+                    videoDataControl.setLooping(true);
+                  });
+                }
 
 
-  void showBottomPopUp(BuildContext context ){
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: "",
-      transitionDuration: Duration(milliseconds: 300),
-      pageBuilder: (context,admin1, admin2 ){
-        return Align(
-          alignment: Alignment.bottomCenter,
-          child: Material(
-            color: Colors.transparent,
-            child: Container(
-              margin: EdgeInsets.all(16),
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Color(0xFF1A3A6F),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text("Delete these lecture ?",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontFamily: "PlayfairDisplay"
-                  ),
-                  ),
-                  SizedBox(height: 10,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                        onPressed: (){
-                          Navigator.of(context).pop();
-                        },
-                        child: Text("Cancel",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: "PlayfairDisplay"
-                        ),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: (){
-                          Navigator.of(context).pop();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green
-                        ),
-                        child: Text("Delete",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: "PlayfairDisplay"
-                        ),
-                        ),
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-      transitionBuilder: (context,anim1,anim2,child){
-        return SlideTransition(
-          position: Tween<Offset>(
-            begin: Offset(0, 1),
-            end: Offset(0, 0)
-          ).animate(anim1),
-          child: child,
-        );
+              }catch(e){
+                print(e);
+              }
+            }
+
+          }
+        }
+
+      }catch(e){
+      if(e is DioException){
+        switch(e.type){
+          case DioExceptionType.connectionTimeout:
+               print("Connection TimeOut ${e.message} ");
+               break;
+          case DioExceptionType.connectionError:
+               print("connection Error: ${e.message}");
+               break;
+          case DioExceptionType.receiveTimeout:
+               print("receieve error: ${e.message} ");
+               break;
+          case DioExceptionType.sendTimeout:
+               print("send error: ${e.message} ");
+               break;
+          case DioExceptionType.badCertificate:
+               print("bad certificate ${e.message} ");
+               break;
+          case DioExceptionType.unknown:
+               print("unknow error: ${e.message} ");
+               break;
+          case DioExceptionType.cancel:
+               print("cancel error: ${e.message} ");
+               break;
+          default:
+                print("default error: ${e.message} ");
+                break;                    
+                         
+        }
+      }else{
+        print("else error: $e");
+      }       
       }
-    );
-  }
+    }
+    //end of function to retrieve the video according to module name
+
+
 
 
 
   @override  
   Widget build(BuildContext context ){
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
 
-            ],
-          ),
-          SizedBox(height: 10,),
-          Row(
-            children: [
-              FutureBuilder(
-                future: videoInitializestudent1,
-                builder: (context, snapshot){
-                  if(snapshot.connectionState == ConnectionState.done){
-                    return Container(
-                      height: 60,
-                      width: 70,
-                      child: AspectRatio(
-                        aspectRatio: videoControlstudent1.value.aspectRatio,
-                        child: VideoPlayer(videoControlstudent1),
-                      ),
-                    );
-                  }else{
-                    return Center(
-                      child: Container(
-                        height: 20,
-                        width: 30,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 1,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+    return RefreshIndicator(
+      onRefresh: () async {
+        controlVideo.forEach((controller)=>controller.dispose);
+        video_content.clear();
+        video_course.clear();
+        video_id.clear();
+        await retrieveVideo();
+      },
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+      
+              ],
+            ),
+            SizedBox(height: 10,),
+            if(isLoading)
+              Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 1,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              )
+            else if(errorText.isNotEmpty)
+              Center(
+                child: Text(errorText,
+                style: TextStyle(
+                  fontFamily: "PlayfairDisplay"
+                ),
+                ),
+              ) 
+            else
+            Container(
+              height: 580,
+              decoration: BoxDecoration(
+                // color: Colors.red
+              ),
+              child: ListView.builder(
+                itemCount: controlVideo.length,
+                itemBuilder: (BuildContext context,int index) {
+                  final videoDisplay = controlVideo[index];
+                  return Column(
+                    children: [
+                      GestureDetector(
+                      onTap: () {
+                        // Use PageRouteBuilder with regular push to allow going back
+                      },
+                        child: Row(
+                          children: [
+                            Column(
+                              children: [
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Container(
+                                      width: 50 ,
+                                      // height: 60,
+                                      decoration: BoxDecoration(
+                                        // color: Colors.red
+                                      ),
+                                      child: Text("Hint",
+                                      style: TextStyle(
+                                        color: Colors.green,
+                                        fontFamily: "PlayfairDisplay"
+                                      ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                    width: 5, 
+                                    ),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width * 0.63,
+                                      // constraints: BoxConstraints(minWidth: 0),
+                                      decoration: BoxDecoration(
+                                        // color: Colors.red
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(video_content[index],
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontFamily: "PlayfairDisplay",
+                                            fontSize: 14
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                          ),
+                                          SizedBox(height: 5,),
+                                          Text(video_course[index],
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 11,
+                                            fontFamily: "PlayfairDisplay"
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                          )
+                                        ],
+                                      ),
+                                    ), 
+                                    IconButton(
+                                      onPressed: (){
+                                        // print("Thank God");
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context)=>student_view1_2(video_content: video_content[index])
+                                          )
+                                        );
+                                      },
+                                      icon: Icon(
+                                        Icons.arrow_forward_ios_sharp,
+                                        color: Colors.white,
+                                        
+                                      ),
+                                    )                                   
+                                  ],
+                                ),
+                                SizedBox(height: 10,),
+                                Container(
+                                  height: 200,
+                                  width: 200,
+                                  child: AspectRatio(
+                                    aspectRatio: videoDisplay.value.aspectRatio,
+                                    child: VideoPlayer(videoDisplay),
+                                  ),
+                                ),
+                                SizedBox(height: 8,),
+                                GestureDetector(
+                                  onTap: (){
+                                    if(videoDisplay.value.isPlaying){
+                                      setState(() {
+                                        videoDisplay.pause();
+                                      });
+                                    }else{
+                                      setState(() {
+                                        videoDisplay.play();
+                                      });
+                                    }
+                                  },
+                                  child: Container(
+                                    width: 35,
+                                    height: 35,
+                                    decoration: BoxDecoration(
+                                      color: const Color.fromARGB(255, 57, 162, 248),
+                                      borderRadius: BorderRadius.circular(15)
+                                    ),
+                                    child: Icon(
+                                      videoDisplay.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                                      size: 21,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                    );
-                  }
-                },
-              ),
-              SizedBox(
-               width: 5, 
-              ),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("The Introduction of data structure and cryptography in these year",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: "PlayfairDisplay",
-                      fontSize: 14
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    ),
-                    Text("Tutorial 1",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 11,
-                      fontFamily: "PlayfairDisplay"
-                    ),
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 3),
-            child: Divider(
-              color: Colors.white,
-              thickness: 0.3,
-            ),
-          ),
-          Row(
-            children: [
-              FutureBuilder(
-                future: videoInitializestudent2,
-                builder: (context, snapshot){
-                  if(snapshot.connectionState == ConnectionState.done){
-                    return Container(
-                      height: 60,
-                      width: 70,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10)
-                      ),
-                      child: AspectRatio(
-                        aspectRatio: videoControlstudent2.value.aspectRatio,
-                        child: VideoPlayer(videoControlstudent2),
-                      ),
-                    );
-                  }else{
-                    return Center(
-                      child: Container(
-                        height: 20,
-                        width: 30,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 1,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 3),
+                        child: Divider(
+                          color: Colors.white,
+                          thickness: 0.3,
                         ),
-                      ),
-                    );
-                  }
-                },
+                      ),                       
+                    ],
+                  );
+                }
               ),
-              SizedBox(
-               width: 5, 
-              ),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("The Introduction of data cleaning ",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: "PlayfairDisplay",
-                      fontSize: 14
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    ),
-                    Text("Tutorial 2",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 11,
-                      fontFamily: "PlayfairDisplay"
-                    ),
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 3),
-            child: Divider(
-              color: Colors.white,
-              thickness: 0.3,
-            ),
-          ),          
-        ],
+            ),         
+          ],
+        ),
       ),
     );
   }

@@ -22,6 +22,8 @@ import "package:dio/dio.dart";
 
 
 class adminRegisterStudent1_2 extends StatefulWidget{
+  final String IpAddress;
+  adminRegisterStudent1_2({ required this.IpAddress });
   @override  
   adminRegisterStudent1_3 createState()=> adminRegisterStudent1_3();
 }
@@ -39,7 +41,7 @@ class adminRegisterStudent1_3 extends State<adminRegisterStudent1_2>{
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
-              adminRegisterStudentTextField1_1()
+              adminRegisterStudentTextField1_1(IpAddress: widget.IpAddress)
             ],
           ),
         ),
@@ -64,6 +66,8 @@ PreferredSizeWidget adminRegisterStudentAppBar(BuildContext context){
 }
 
 class adminRegisterStudentTextField1_1 extends StatefulWidget{
+  final String IpAddress;
+  adminRegisterStudentTextField1_1({ required this.IpAddress });
   @override  
   adminRegisterStudentTextField1_2 createState()=> adminRegisterStudentTextField1_2();
 }
@@ -119,7 +123,7 @@ Future<void> registerStudent() async{
       );
 
       try{
-        var ipAddress = "192.168.134.102";
+        var ipAddress = widget.IpAddress;
         var url = "http://$ipAddress/project_app/register.php";
         var data1 = {
           "fname": fname.text,
