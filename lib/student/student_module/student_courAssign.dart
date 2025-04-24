@@ -383,7 +383,7 @@ void  dispose(){
                                         color: Colors.white,
                                         
                                       ),
-                                    )                                   
+                                    ),
                                   ],
                                 ),
                                 SizedBox(height: 10,),
@@ -456,286 +456,248 @@ class course_assignment1_1 extends StatefulWidget{
 
 class course_assignment1_2 extends State<course_assignment1_1>{
 
+  List<dynamic> database_table = [];
+  List<dynamic> question_note = [];
+  List<dynamic> lecture_name = [];
+  String errorText = "";
+  bool isLoading = false;
 
-  void showAssignmentDelet( BuildContext context ){
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: "",
-      transitionDuration: Duration(milliseconds: 300),
-      pageBuilder: (context,anim1,anim2){
-        return Align(
-          alignment: Alignment.bottomCenter,
-          child: Material(
-            color: Colors.transparent,
-            child: Container(
-              margin: EdgeInsets.all(16),
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: Color(0xFF1A3A6F),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text("Delete these Question ?",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontFamily: "PlayfairDisplay",
-                  ),
-                  ),
-                  SizedBox(height: 10,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                        onPressed: (){
-                          Navigator.of(context).pop();
-                        },
-                        child: Text("Cancel",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: "PlayfairDisplay"
-                        ),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: (){
-                          Navigator.of(context).pop();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green
-                        ),
-                        child: Text("Delete",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: "PlayfairDisplay"
-                        ),
-                        ),
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-      transitionBuilder: (context,anim1,anim2,child){
-        return SlideTransition(
-          position: Tween<Offset>(
-            begin: Offset(0, 1),
-            end: Offset(0, 0)
-          ).animate(anim1),
-          child: child,
-        );
-      }
-    );
+  //start of initState
+  @override  
+  void initState(){
+    super.initState();
+    retrieveQuestion();
   }
+  //end of initState
 
+  //start of function of retrieve question table
+  Future<void> retrieveQuestion() async {
+    setState(() {
+      isLoading = true;
+      errorText = "";
+    });
+    String module_name = "DataBase Management"+"_qu";
+    String actual_module = "DataBase Management";
+    try{
+      Dio dio = Dio(
+        BaseOptions(
+          connectTimeout: Duration(seconds: 20),
+          receiveTimeout: Duration(seconds: 20),
+          headers: {
+            "Accept": "*/*"
+          }
+        )
+      );
+
+      var IpAddress = "192.168.126.102";
+      var sendDataUrl = "http://${IpAddress}/project_app/student_Assign.php";
+      var dataSend = {
+        "table_name": module_name,
+        "actual_module": actual_module
+      };
+
+      Response response = await dio.post(
+        sendDataUrl,
+        data: FormData.fromMap(dataSend)
+      );
+
+      if(response.statusCode == 200){
+        // print(response.data);
+        setState(() {
+          isLoading = false;
+          errorText = "";
+        });
+        var dataRecieved = response.data;
+        if(dataRecieved['message'] == "No Question Uploaded"){
+          setState(() {
+            errorText = "No Question Uploaded";
+          });
+        }else{
+          var ReceivedData = dataRecieved['message'];
+          setState(() {
+            for(var ReceivedData2 in ReceivedData ){
+              database_table.add(ReceivedData2['database_table']);
+              question_note.add(ReceivedData2['question_note']);
+              lecture_name.add(ReceivedData2['lecture_name']);
+            }
+          });
+        }
+      }
+       
+
+    }catch(e){
+      if(e is DioException){
+        switch(e.type){
+          case DioExceptionType.connectionTimeout:
+               print("Connection TimeOut ${e.message} ");
+               break;
+          case DioExceptionType.connectionError:
+               print("connection Error: ${e.message}");
+               break;
+          case DioExceptionType.receiveTimeout:
+               print("receieve error: ${e.message} ");
+               break;
+          case DioExceptionType.sendTimeout:
+               print("send error: ${e.message} ");
+               break;
+          case DioExceptionType.badCertificate:
+               print("bad certificate ${e.message} ");
+               break;
+          case DioExceptionType.unknown:
+               print("unknow error: ${e.message} ");
+               break;
+          case DioExceptionType.cancel:
+               print("cancel error: ${e.message} ");
+               break;
+          default:
+                print("default error: ${e.message} ");
+                break;                    
+                         
+        }
+      }else{
+        print("else error: $e");
+      }       
+    }
+  }
+  //end of function of retrieve question table 
 
   @override  
   Widget build(BuildContext context){
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text("what skill would you choose to perfect without any effort or time needed for learning? Additionally, how do you think mastering this particular skill would impact your progress, efficiency, and overall success in your academic or professional journey?",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: "PlayfairDisplay",
-                      fontSize: 14,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.02,
-                    ),
-                    Row(
+    return RefreshIndicator(
+      onRefresh: () async {
+        database_table.clear();
+        question_note.clear();
+        lecture_name.clear();
+
+        await retrieveQuestion();
+      },
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            if(isLoading)
+              Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 1,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              )
+            else if(errorText.isNotEmpty)
+             Center(
+              child: Text(errorText,
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily: "PlayfairDisplay"
+              ),
+              ),
+             )
+            else   
+              Container(
+                height: 580,
+                decoration: BoxDecoration(
+                  // color: Colors.red
+                ),
+                child: ListView.builder(
+                  itemCount: database_table.length,
+                  itemBuilder: ( BuildContext context,  int index ) {
+                    return Column(
                       children: [
-                        Container(
-                          width: 68,
-                          child: Text("Question 1",
-                          style: TextStyle(
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(question_note[index],
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: "PlayfairDisplay",
+                                    fontSize: 14,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                  ),
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height * 0.02,
+                                  ),
+                                  Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 11,
+                                        backgroundColor: Colors.white,
+                                        child: Icon(
+                                          Icons.person,
+                                          size: 16,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width * 0.01 ,
+                                      ),
+                                      Container(
+                                        width: 80,
+                                        decoration: BoxDecoration(
+                                          // color: Colors.red
+                                        ),
+                                        child: Text(lecture_name[index],
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontFamily: "PlayfairDisplay" 
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        ),
+                                      ),
+                                      Flexible(
+                                        child: SizedBox(
+                                          width: double.infinity,
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: (){
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context)=> student_Assign1_2()
+                                            )
+                                          );
+                                        },
+                                        icon: Icon(
+                                          Icons.arrow_forward_ios_outlined,
+                                          size: 17,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 3),
+                          child: Divider(
                             color: Colors.white,
-                            fontFamily: "PlayfairDisplay",
-                            fontSize: 12,
+                            thickness: 0.3,
                           ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.05,
-                        ),
-                        CircleAvatar(
-                          radius: 11,
-                          backgroundColor: Colors.white,
-                          child: Icon(
-                            Icons.person,
-                            size: 16,
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.01 ,
-                        ),
-                        Container(
-                          width: 80,
-                          decoration: BoxDecoration(
-                            // color: Colors.red
-                          ),
-                          child: Text("Mr Mwasaga",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontFamily: "PlayfairDisplay" 
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          ),
-                        ),
-                        Flexible(
-                          child: SizedBox(
-                            width: double.infinity,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: (){
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context)=> student_Assign1_2()
-                              )
-                            );
-                          },
-                          icon: Icon(
-                            Icons.arrow_forward_ios_outlined,
-                            size: 17,
-                            color: Colors.white,
-                          ),
-                        )
+                        ),                    
                       ],
-                    )
-                  ],
+                    );
+                  }
                 ),
               ),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 3),
-            child: Divider(
-              color: Colors.white,
-              thickness: 0.3,
-            ),
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text("If you had the incredible opportunity to instantly master one specific skill that is directly related to your current projects, studies, or long-term career goals—whether it's in quantum technologies,",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: "PlayfairDisplay",
-                      fontSize: 14,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.02,
-                    ),
-                    Row(
-                      children: [
-                        Container(
-                          width: 68,
-                          decoration: BoxDecoration(
-                            // color: Colors.black
-                          ),
-                          child: Text("Question 1",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: "PlayfairDisplay",
-                            fontSize: 12,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.05,
-                        ),
-                        CircleAvatar(
-                          radius: 11,
-                          backgroundColor: Colors.white,
-                          child: Icon(
-                            Icons.person,
-                            size: 16,
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.01 ,
-                        ),
-                        Container(
-                          width: 80,
-                          child: Text("Lisaa Jane",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontFamily: "PlayfairDisplay" 
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          ),
-                        ),
-                        Flexible(
-                          child: SizedBox(
-                            width: double.infinity,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: (){
-                            print("View answer");
-                          },
-                          icon: Icon(
-                            Icons.arrow_forward_ios_outlined,
-                            size: 17,
-                            color: Colors.white,
-                          ),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 3),
-            child: Divider(
-              color: Colors.white,
-              thickness: 0.3,
-            ),
-          ),          
-        ],
+          ],
+        ),
       ),
     );
   }
