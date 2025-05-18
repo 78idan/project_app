@@ -3,6 +3,11 @@ import 'package:video_player/video_player.dart';
 import 'package:project_app/student/student_module/student_answer.dart';
 import 'package:dio/dio.dart';
 import 'package:project_app/student/student_module/view/student_view.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import "dart:io";
+import 'package:permission_handler/permission_handler.dart';
 void main(){
   runApp(
     student_courAssign1_1()
@@ -105,9 +110,11 @@ class course_video1_2 extends State<course_video1_1>{
   List<dynamic> video_course = [];
   List<dynamic> videoName2 = [];
   String errorText = "";
+  Map<String, double> downloadProgress = {};
+  Map<String, bool> downloadComplete = {};  
   //start of variable of special cases that have filled the parameterers of student_viewVideo1_2() function
   String table_name2 = "";
-  String IpAddress = "192.168.224.102";
+  String IpAddress = "192.168.108.102";
   //end of variable of special cases that have filled the parameterers of student_viewVideo1_2() function
   bool isLoading = false;
   late Future<void> videoInitializestudent1;
@@ -126,11 +133,153 @@ void  dispose(){
   void initState(){
     super.initState();
     retrieveVideo();
-
+    _loadDownloadStatus();
 
   }
 
 
+Future<void> _downloadVideo(String videoUrl, String videoId) async {
+  // Required imports:
+  // import 'package:path_provider/path_provider.dart';
+  // import 'dart:io';
+  // import 'package:permission_handler/permission_handler.dart';
+  
+  // Request storage permissions first (required for Android)
+  if (Platform.isAndroid) {
+    var status = await Permission.storage.request();
+    if (!status.isGranted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Storage permission required to download videos'))
+      );
+      return;
+    }
+  }
+
+  // Get downloads directory path
+  Directory? downloadsDir;
+  if (Platform.isAndroid) {
+    // Use public Downloads folder for Android
+    downloadsDir = Directory('/storage/emulated/0/Download');
+    // Make sure the directory exists
+    if (!await downloadsDir.exists()) {
+      // Fallback to app's external storage if Downloads isn't accessible
+      downloadsDir = await getExternalStorageDirectory();
+    }
+  } else if (Platform.isIOS) {
+    // iOS doesn't allow access to system downloads folder
+    // Use app's documents directory instead
+    downloadsDir = await getApplicationDocumentsDirectory();
+  }
+
+  if (downloadsDir == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Could not access downloads directory'))
+    );
+    return;
+  }
+
+  // Create a more user-friendly filename with timestamp
+  String filename = 'course_video_${videoId}_${DateTime.now().millisecondsSinceEpoch}.mp4';
+  final savePath = '${downloadsDir.path}/$filename';
+  
+  // Check if file already exists
+  final file = File(savePath);
+  if (await file.exists()) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Video already downloaded'))
+    );
+    return;
+  }
+  
+  try {
+    setState(() {
+      downloadProgress[videoId] = 0;
+      downloadComplete[videoId] = false;
+    });
+    
+    // Show download starting message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Download starting...'))
+    );
+    
+    // You're already using Dio, so we can use it for downloads
+    await Dio().download(
+      videoUrl,
+      savePath,
+      onReceiveProgress: (received, total) {
+        if (total != -1) {
+          setState(() {
+            downloadProgress[videoId] = received / total;
+          });
+        }
+      },
+    );
+    
+    setState(() {
+      downloadComplete[videoId] = true;
+    });
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Video downloaded to Downloads folder'),
+        action: SnackBarAction(
+          label: 'OK',
+          onPressed: () {},
+        ),
+      )
+    );
+    
+    // Save download status for persistence across app restarts
+    _saveDownloadStatus();
+  } catch (e) {
+    print('Download error: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Download failed: ${e.toString()}'))
+    );
+  }
+}
+
+
+Future<void> _saveDownloadStatus() async {
+  // Add these imports at the top of your file
+  // import 'dart:convert';
+  // import 'package:shared_preferences/shared_preferences.dart';
+  
+  final prefs = await SharedPreferences.getInstance();
+  final downloadStatus = Map<String, bool>.from(downloadComplete);
+  await prefs.setString('downloadStatus', jsonEncode(downloadStatus));
+}
+
+
+Future<void> _loadDownloadStatus() async {
+  final prefs = await SharedPreferences.getInstance();
+  final downloadStatusJson = prefs.getString('downloadStatus');
+  
+  if (downloadStatusJson != null) {
+    final Map<String, dynamic> loadedStatus = jsonDecode(downloadStatusJson);
+    setState(() {
+      downloadComplete = Map<String, bool>.from(loadedStatus);
+    });
+    
+    // Verify files actually exist
+    _verifyDownloadedFiles();
+  }
+}
+
+Future<void> _verifyDownloadedFiles() async {
+  final appDir = await getApplicationDocumentsDirectory();
+  
+  for (final videoId in downloadComplete.keys.toList()) {
+    final file = File('${appDir.path}/$videoId.mp4');
+    if (!await file.exists()) {
+      setState(() {
+        downloadComplete[videoId] = false;
+      });
+    }
+  }
+  
+  _saveDownloadStatus();
+}
 
 
     //start of function to retrieve the video according to module name
@@ -152,7 +301,7 @@ void  dispose(){
           )
         );
         print(module_name);
-        var IpAddress = "192.168.126.102";
+        var IpAddress = "192.168.108.102";
         var dataSend = {
           "Table_name": module_name
         };
@@ -396,31 +545,61 @@ void  dispose(){
                                   ),
                                 ),
                                 SizedBox(height: 8,),
-                                GestureDetector(
-                                  onTap: (){
-                                    if(videoDisplay.value.isPlaying){
-                                      setState(() {
-                                        videoDisplay.pause();
-                                      });
-                                    }else{
-                                      setState(() {
-                                        videoDisplay.play();
-                                      });
-                                    }
-                                  },
-                                  child: Container(
-                                    width: 35,
-                                    height: 35,
-                                    decoration: BoxDecoration(
-                                      color: const Color.fromARGB(255, 57, 162, 248),
-                                      borderRadius: BorderRadius.circular(15)
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width * 0.39,
                                     ),
-                                    child: Icon(
-                                      videoDisplay.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                                      size: 21,
-                                      color: Colors.white,
+                                    GestureDetector(
+                                      onTap: (){
+                                        if(videoDisplay.value.isPlaying){
+                                          setState(() {
+                                            videoDisplay.pause();
+                                          });
+                                        }else{
+                                          setState(() {
+                                            videoDisplay.play();
+                                          });
+                                        }
+                                      },
+                                      child: Container(
+                                        width: 35,
+                                        height: 35,
+                                        decoration: BoxDecoration(
+                                          color: const Color.fromARGB(255, 57, 162, 248),
+                                          borderRadius: BorderRadius.circular(15)
+                                        ),
+                                        child: Icon(
+                                          videoDisplay.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                                          size: 21,
+                                          color: Colors.white,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width * 0.3,
+                                    ),
+                                    GestureDetector(
+                                      onTap: (){
+                                        // print("Thank God");
+                                        _downloadVideo(videoName2[index], video_id[index].toString());
+                                      },
+                                      child: Container(
+                                        height: 35,
+                                        width: 35,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(10),
+                                          color: Colors.red
+                                        ),
+                                        child: Icon(
+                                          Icons.download,
+                                          color: Colors.white,
+                                          size: 21,
+                                        ),
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ],
                             ),
@@ -489,7 +668,7 @@ class course_assignment1_2 extends State<course_assignment1_1>{
         )
       );
 
-      var IpAddress = "192.168.126.102";
+      var IpAddress = "192.168.108.102";
       var sendDataUrl = "http://${IpAddress}/project_app/student_Assign.php";
       var dataSend = {
         "table_name": module_name,
