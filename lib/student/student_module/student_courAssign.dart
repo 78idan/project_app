@@ -8,25 +8,30 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import "dart:io";
 import 'package:permission_handler/permission_handler.dart';
-void main(){
-  runApp(
-    student_courAssign1_1()
-  );
-}
+// void main(){
+//   runApp(
+//     student_courAssign1_1()
+//   );
+// }
 
-class student_courAssign1_1 extends StatelessWidget{
-  @override  
-  Widget build(BuildContext context ){
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: student_courAssign1_2(),
-    );
-  }
-}
+// class student_courAssign1_1 extends StatelessWidget{
+//   @override  
+//   Widget build(BuildContext context ){
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: student_courAssign1_2(),
+//     );
+//   }
+// }
 
 
 
 class student_courAssign1_2 extends StatefulWidget{
+  final String module_name;
+  final String IpAddress;
+  final String candidee_num;
+  final String candidee_level;
+  student_courAssign1_2({required this.module_name, required this.IpAddress, required this.candidee_num, required this.candidee_level});
   @override  
   student_courAssign1_3 createState()=> student_courAssign1_3();
 }
@@ -44,11 +49,11 @@ class student_courAssign1_3 extends State<student_courAssign1_2>{
           children: [
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-              child: course_video1_1(),
+              child: course_video1_1(module_name: widget.module_name, IpAddress: widget.IpAddress),
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-              child: course_assignment1_1(),
+              child: course_assignment1_1(module_name: widget.module_name, IpAddress: widget.IpAddress,candidee_num: widget.candidee_num,candidee_level: widget.candidee_level,),
             )
           ],
         ),
@@ -97,6 +102,9 @@ PreferredSizeWidget student_courAssignAppBar( BuildContext context ){
 
 
 class course_video1_1 extends StatefulWidget{
+  final String module_name;
+  final String IpAddress;
+  course_video1_1({ required this.module_name,required this.IpAddress });  
   @override  
   course_video1_2 createState()=> course_video1_2();
 }
@@ -284,7 +292,7 @@ Future<void> _verifyDownloadedFiles() async {
 
     //start of function to retrieve the video according to module name
     Future<void> retrieveVideo() async{
-      String module_name = "DataBase Management"+"_video";
+      String module_name = widget.module_name+"_video";
       setState(() {
         isLoading = true;
         errorText = "";
@@ -301,7 +309,7 @@ Future<void> _verifyDownloadedFiles() async {
           )
         );
         print(module_name);
-        var IpAddress = "192.168.108.102";
+        var IpAddress = widget.IpAddress ;
         var dataSend = {
           "Table_name": module_name
         };
@@ -629,15 +637,20 @@ Future<void> _verifyDownloadedFiles() async {
 }
 
 class course_assignment1_1 extends StatefulWidget{
+  final String module_name;
+  final String IpAddress;
+  final String candidee_num;
+  final String candidee_level;
+  course_assignment1_1({ required this.module_name, required this.IpAddress, required this.candidee_num, required this.candidee_level });  
   @override  
   course_assignment1_2 createState()=> course_assignment1_2();
 }
 
 class course_assignment1_2 extends State<course_assignment1_1>{
-
   List<dynamic> database_table = [];
   List<dynamic> question_note = [];
   List<dynamic> lecture_name = [];
+  // var IpAddress = "192.168.108.102";
   String errorText = "";
   bool isLoading = false;
 
@@ -655,8 +668,8 @@ class course_assignment1_2 extends State<course_assignment1_1>{
       isLoading = true;
       errorText = "";
     });
-    String module_name = "DataBase Management"+"_qu";
-    String actual_module = "DataBase Management";
+    String module_name = widget.module_name+"_qu";
+    String actual_module = widget.module_name;
     try{
       Dio dio = Dio(
         BaseOptions(
@@ -668,7 +681,7 @@ class course_assignment1_2 extends State<course_assignment1_1>{
         )
       );
 
-      var IpAddress = "192.168.108.102";
+      var IpAddress = widget.IpAddress;
       var sendDataUrl = "http://${IpAddress}/project_app/student_Assign.php";
       var dataSend = {
         "table_name": module_name,
@@ -846,7 +859,7 @@ class course_assignment1_2 extends State<course_assignment1_1>{
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context)=> student_Assign1_2()
+                                              builder: (context)=> student_Assign1_2(dataBase_table: database_table[index], question_note: question_note[index], candidee_num: widget.candidee_num, candidee_level: widget.candidee_level,IpAddress: widget.IpAddress,)
                                             )
                                           );
                                         },

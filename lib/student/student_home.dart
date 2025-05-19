@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:project_app/student/student_module/student_module.dart';
 
 // void main(){
 //   runApp(
@@ -28,11 +28,20 @@ class student_home1_2 extends StatefulWidget{
 
 class student_home1_3 extends State<student_home1_2>{
 
+  String candidee_num = "22050513039";
+  String candidee_level = "Level 5";
+  String IpAddress = "192.168.108.102";
+
   List<Widget> gridWidget (BuildContext context) {
     return [
       GestureDetector(
         onTap: (){
-          print("Hello Module");
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context)=>student_module1_2(candidee_num: candidee_num, candidee_level: candidee_level, IpAddress: IpAddress)
+            )
+          );
         },
         child: Container(
           decoration: BoxDecoration(

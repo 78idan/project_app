@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:project_app/student/student_module/student_courAssign.dart';
 
+// void main(){
+//   runApp(
+//     student_module1_1()
+//   );
+// }
 
-void main(){
-  runApp(
-    student_module1_1()
-  );
-}
-
-class student_module1_1 extends StatelessWidget{
-  @override  
-  Widget build(BuildContext context ){
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: student_module1_2(),
-    );
-  }
-}
+// class student_module1_1 extends StatelessWidget{
+//   @override  
+//   Widget build(BuildContext context ){
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: student_module1_2(),
+//     );
+//   }
+// }
 
 
 
 class student_module1_2 extends StatefulWidget{
+  final String candidee_num;
+  final String  candidee_level;
+  final String IpAddress;
+  student_module1_2({ required this.candidee_num, required this.candidee_level, required this.IpAddress });
   @override  
   student_module1_3 createState()=> student_module1_3();
 }
@@ -36,7 +40,7 @@ class student_module1_3 extends State<student_module1_2>{
         padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
-          child: studentModuleContainer1_1()
+          child: studentModuleContainer1_1(candidee_num: widget.candidee_num, candidee_level: widget.candidee_level, IpAddress: widget.IpAddress)
         ),
       ),
     );
@@ -61,6 +65,10 @@ PreferredSizeWidget studentModuleAppBar( BuildContext context ){
 
 
 class studentModuleContainer1_1 extends StatefulWidget{
+  final String candidee_num;
+  final String  candidee_level;
+  final String IpAddress;
+  studentModuleContainer1_1({ required this.candidee_num, required this.candidee_level, required this.IpAddress });
   @override  
   studentModuleContainer1_2 createState()=> studentModuleContainer1_2();
 }
@@ -68,7 +76,7 @@ class studentModuleContainer1_1 extends StatefulWidget{
 class studentModuleContainer1_2 extends State<studentModuleContainer1_1>{
   List<dynamic> module_name = [];
   List<dynamic> module_lecture = [];
-  String emptyText = "";
+  String emptyText = ""; 
   //start of initState function
   void initState(){
     super.initState();
@@ -78,10 +86,11 @@ class studentModuleContainer1_2 extends State<studentModuleContainer1_1>{
 
   //start of function of retrieving  the module namd and teachers name
   Future<void> retrieveModule() async {
+  String level_name = widget.candidee_level;
+  var IpAddress = widget.IpAddress;     
     setState(() {
       emptyText = "";
     });
-    String level_name = "Level 6";
     try{
       Dio dio = Dio(
         BaseOptions(
@@ -94,7 +103,7 @@ class studentModuleContainer1_2 extends State<studentModuleContainer1_1>{
       );
 
 
-      var IpAddress = "192.168.102.102";
+      
       var dataSend = {
         "level_name":level_name
       };
@@ -258,7 +267,12 @@ class studentModuleContainer1_2 extends State<studentModuleContainer1_1>{
                                         ),
                                         GestureDetector(
                                           onTap: (){
-                                            print("Let us go");
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context)=> student_courAssign1_2(module_name: module_name[index], IpAddress: widget.IpAddress, candidee_num: widget.candidee_num, candidee_level: widget.candidee_level)
+                                              )
+                                            );
                                           },
                                           child: Icon(
                                             Icons.arrow_forward_ios,
