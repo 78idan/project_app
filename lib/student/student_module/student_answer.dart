@@ -67,6 +67,7 @@ class student_questionAnswer1_2 extends StatefulWidget{
 }
 
 class student_questionAnswer1_3 extends State<student_questionAnswer1_2>{
+  TextEditingController answerController = TextEditingController();
   String table_name = "DataBase Management_qualot";
   String question_note = "";
   String candidee_num = "22050513039";
@@ -135,6 +136,7 @@ class student_questionAnswer1_3 extends State<student_questionAnswer1_2>{
                         children: [
                           Expanded(
                             child: TextFormField(
+                              controller: answerController,
                               expands: true,
                               maxLines: null,
                               style: TextStyle(
@@ -174,6 +176,7 @@ class student_questionAnswer1_3 extends State<student_questionAnswer1_2>{
                             child: MaterialButton(
                               onPressed: (){
                                 timeCalculation();
+                                print(answerController.text);
                               },
                               height: 50,
                               color: Color(0xFF5DADE2),
