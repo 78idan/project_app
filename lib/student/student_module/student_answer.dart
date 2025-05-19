@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 
 
 
-// void main(){
-//   runApp(
-//     student_Assign1_1()
-//   );
-// }
+void main(){
+  runApp(
+    student_Assign1_1()
+  );
+}
 
-// class student_Assign1_1 extends StatelessWidget{
-//   @override  
-//   Widget build(BuildContext context ){
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       home: student_Assign1_2(),
-//     );
-//   }
-// }
+class student_Assign1_1 extends StatelessWidget{
+  @override  
+  Widget build(BuildContext context ){
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: student_Assign1_2(),
+    );
+  }
+}
 
 class student_Assign1_2 extends StatefulWidget{
   @override  
@@ -67,6 +67,23 @@ class student_questionAnswer1_2 extends StatefulWidget{
 }
 
 class student_questionAnswer1_3 extends State<student_questionAnswer1_2>{
+  String table_name = "DataBase Management_qualot";
+  String question_note = "";
+  String candidee_num = "22050513039";
+  String candidee_answer = "";
+  String candidee_level = "Level 8";
+  String candidee_time = "";
+
+  void timeCalculation(){
+    final now = DateTime.now();
+    final hour = now.hour;
+    final minute = now.minute.toString().padLeft(2, '0'); // ensures two digits
+    final timeString = '$hour:$minute';
+    // print(timeString);
+    setState(() {
+      candidee_time = timeString;
+    });    
+  }
   GlobalKey questionKey = GlobalKey<FormState>();
   @override  
   Widget build(BuildContext context){
@@ -156,7 +173,7 @@ class student_questionAnswer1_3 extends State<student_questionAnswer1_2>{
                             borderRadius: BorderRadius.circular(10),
                             child: MaterialButton(
                               onPressed: (){
-                                print("question");
+                                timeCalculation();
                               },
                               height: 50,
                               color: Color(0xFF5DADE2),
