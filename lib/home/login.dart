@@ -4,7 +4,7 @@ import 'package:project_app/home/sign_up.dart';
 import 'package:project_app/admin_dashboard/admin_dashboard2.dart';
 import 'package:dio/dio.dart';
 import 'package:project_app/lecture_dashboard/lecture_dashboard2.dart';
-
+import 'package:project_app/student/student_dashboard.dart';
 // void main(){
 //   runApp(
 //     login1_1()
@@ -93,7 +93,7 @@ class form1_1 extends State<form1>{
   String ErrorText="";
   TextEditingController admissionController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  var IpAddress = "192.168.158.102";
+  var IpAddress = "192.168.108.102";
 
   bool isbscure = true;
   //starting of function of validation
@@ -146,7 +146,7 @@ class form1_1 extends State<form1>{
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context)=>admin_dashboard1_2(IpAddress: IpAddress, admission_number: admissionController.text,)
+              builder: (context)=>student_dashboard1_2(IpAddress: IpAddress, candidee_num: admissionController.text,)
             )
           );
         }else if(receiveData['message'] == "lecture"){
@@ -154,6 +154,13 @@ class form1_1 extends State<form1>{
             context,
             MaterialPageRoute(
               builder: (context)=>lecture_dashboard2_2(IpAddress: IpAddress , admission_number: admissionController.text, )
+            )
+          );
+        }else if(receiveData['message'] == "admin"){
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context)=>admin_dashboard1_2(IpAddress: IpAddress , admission_number: admissionController.text, )
             )
           );
         }else{

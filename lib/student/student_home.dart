@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project_app/student/student_module/student_module.dart';
+import 'package:dio/dio.dart';
 
 // void main(){
 //   runApp(
@@ -19,6 +20,9 @@ import 'package:project_app/student/student_module/student_module.dart';
 
 
 class student_home1_2 extends StatefulWidget{
+  final String IpAddress;
+  final String candidee_num;
+  student_home1_2({ required this.IpAddress , required this.candidee_num });  
   @override  
   student_home1_3 createState()=> student_home1_3();
 
@@ -28,9 +32,90 @@ class student_home1_2 extends StatefulWidget{
 
 class student_home1_3 extends State<student_home1_2>{
 
-  String candidee_num = "22050513039";
-  String candidee_level = "Level 5";
-  String IpAddress = "192.168.108.102";
+  // String candidee_num = "22050513040";
+  String candidee_level = "";
+  // String IpAddress = "192.168.108.102";
+  String first_name = "";
+  String last_name = "";
+  String role = "";
+  //start of initState function
+  @override 
+  void initState(){
+    super.initState();
+    retrieveProfile();
+  }
+  //end of initState function
+
+  //start of function to retrieve name for profile page
+  Future<void> retrieveProfile() async {
+    try{
+      Dio dio = Dio(
+        BaseOptions(
+          connectTimeout: Duration(seconds: 15),
+          receiveTimeout: Duration(seconds: 15)
+        ),
+      );
+      var IpAddress = widget.IpAddress;
+      var Url = "http://${IpAddress}/project_app/student_profile.php";
+      var dataSent = {
+        "candidee_num": widget.candidee_num
+      };
+
+      Response response = await dio.post(
+        Url,
+        data: FormData.fromMap(dataSent)
+      );
+
+      if(response.statusCode == 200){
+        // print(response.data);
+        var dataReceived = response.data;
+        if(dataReceived['message'] == "Data received"){
+          setState(() {
+            first_name = dataReceived['fname'];
+            last_name = dataReceived['lname'];
+            role = dataReceived['role'];
+            candidee_level = dataReceived['level'];
+          });
+        }else{
+          print(dataReceived['message']);
+        }
+      }
+
+    }catch(e){
+      if(e is DioException){
+        switch(e.type){
+          case DioExceptionType.connectionTimeout:
+               print("Connection TimeOut ${e.message} ");
+               break;
+          case DioExceptionType.connectionError:
+               print("connection Error: ${e.message}");
+               break;
+          case DioExceptionType.receiveTimeout:
+               print("receieve error: ${e.message} ");
+               break;
+          case DioExceptionType.sendTimeout:
+               print("send error: ${e.message} ");
+               break;
+          case DioExceptionType.badCertificate:
+               print("bad certificate ${e.message} ");
+               break;
+          case DioExceptionType.unknown:
+               print("unknow error: ${e.message} ");
+               break;
+          case DioExceptionType.cancel:
+               print("cancel error: ${e.message} ");
+               break;
+          default:
+                print("default error: ${e.message} ");
+                break;                    
+                         
+        }
+      }else{
+        print("else error: $e");
+      }      
+    }
+  }
+  //end of function to retrieve name for profile page  
 
   List<Widget> gridWidget (BuildContext context) {
     return [
@@ -39,7 +124,7 @@ class student_home1_3 extends State<student_home1_2>{
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context)=>student_module1_2(candidee_num: candidee_num, candidee_level: candidee_level, IpAddress: IpAddress)
+              builder: (context)=>student_module1_2(candidee_num: widget.candidee_num, candidee_level: candidee_level, IpAddress: widget.IpAddress)
             )
           );
         },
@@ -128,14 +213,14 @@ class student_home1_3 extends State<student_home1_2>{
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Isaack Bertam",
+                    Text("$first_name $last_name",
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: "PlayfairDisplay",
                       fontSize: 14
                     ),
                     ),
-                    Text("Student",
+                    Text("$role",
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: "PlayfairDisplay",
