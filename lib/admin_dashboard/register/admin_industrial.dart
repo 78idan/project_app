@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 
 
 
@@ -419,7 +420,7 @@ class scheduleTextField1_2 extends State<scheduleTextField1_1>{
   final keyScheduleUp = GlobalKey<FormState>();
   TextEditingController startingDate = TextEditingController();
   TextEditingController endingDate = TextEditingController();
-
+  final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
 //start of validation function
 Future<void> validateScheduleRegister() async {
   if(startingDate.text.isEmpty){
@@ -431,6 +432,39 @@ Future<void> validateScheduleRegister() async {
   }
 } 
 //end of validation function
+//start of date function 1
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(), // current date
+      firstDate: DateTime(2000), // earliest date allowed
+      lastDate: DateTime(2101), // latest date allowed
+    );
+
+    if (picked != null) {
+      setState(() {
+        startingDate.text = DateFormat('yyyy-MM-dd').format(picked);
+      });
+    }
+  }
+//end of date function 1
+
+//start of date function 2
+  Future<void> _selectDate2(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(), // current date
+      firstDate: DateTime(2000), // earliest date allowed
+      lastDate: DateTime(2101), // latest date allowed
+    );
+
+    if (picked != null) {
+      setState(() {
+        endingDate.text = DateFormat('yyyy-MM-dd').format(picked);
+      });
+    }
+  }
+//end of date function 2
 
 //start of registering schedule function
 Future<void> registerSchedule() async{
@@ -458,8 +492,12 @@ Future<void> registerSchedule() async{
           // print(response.data);
           var dataReceived = response.data;
           if (dataReceived['message'] == "schedule enrolled"){
+            startingDate.clear();
+            endingDate.clear();
             customNotification.notificationCustom(context, message: dataReceived['message'],picIcon: Icon(Icons.check_circle,color: Colors.white,size: 14,));
           }else{
+            startingDate.clear();
+            endingDate.clear();            
             customNotification.notificationCustom(context, message: dataReceived['message']);
           }
         }
@@ -534,7 +572,11 @@ Future<void> registerSchedule() async{
               children: [                                                                                           
                 SizedBox(height: 10,),
                 TextFormField(
+                  onTap: (){
+                    _selectDate(context);
+                  },
                   controller: startingDate,
+                  readOnly: true,
                   style: TextStyle(
                     color: Colors.white
                   ),
@@ -561,10 +603,14 @@ Future<void> registerSchedule() async{
                 ),  
                 SizedBox(height: 10,),
                 TextFormField(
+                  readOnly: true,
                   controller: endingDate,
                   style: TextStyle(
                     color: Colors.white
                   ),
+                  onTap: (){
+                    _selectDate2(context);
+                  },
                   decoration: InputDecoration(
                     hintText: "Ending Date",
                     hintStyle: TextStyle(
@@ -595,6 +641,11 @@ Future<void> registerSchedule() async{
                         child: MaterialButton(
                           onPressed: (){
                             validateScheduleRegister();
+                            // DateTime? start = DateTime.tryParse(startingDate.text);
+                            // DateTime? end = DateTime.tryParse(endingDate.text);
+                            // if(start!.isAfter(end!)){
+                            //   print("Thanks God");
+                            // }
                           },
                           textColor: Colors.white,
                           color: Color(0xFF5DADE2),
