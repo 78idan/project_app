@@ -646,6 +646,8 @@ Future<void> registerSchedule() async{
                             // if(start!.isAfter(end!)){
                             //   print("Thanks God");
                             // }
+                            // String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+                            // print(formattedDate);
                           },
                           textColor: Colors.white,
                           color: Color(0xFF5DADE2),
