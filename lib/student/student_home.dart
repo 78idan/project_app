@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project_app/student/student_module/student_module.dart';
 import 'package:dio/dio.dart';
+import 'package:project_app/student/student_log/student_week.dart';
 
 // void main(){
 //   runApp(
@@ -156,7 +157,13 @@ class student_home1_3 extends State<student_home1_2>{
       ),
       GestureDetector(
         onTap: (){
-          print("Industrial Practical training");
+          // print("Industrial Practical training");
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context)=>week1_2()
+            )
+          );
         },
         child: Container(
           decoration: BoxDecoration(

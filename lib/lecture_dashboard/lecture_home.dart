@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project_app/lecture_dashboard/lecture_module/lecture_module.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
+import 'package:project_app/lecture_dashboard/lecture_log/lecture_name.dart';
 // void main(){
 //   runApp(
 //     lecture_home1_1()
@@ -154,7 +155,13 @@ class lecture_home1_3 extends State<lecture_home1_2>{
       GestureDetector(
         onTap: (){
           // print("Industrial section");
-          check_Ipt();
+          // check_Ipt();
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context)=>student_no1_2()
+            )
+          );
         },
         child: Container(
           decoration: BoxDecoration(
