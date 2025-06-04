@@ -6,22 +6,27 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:project_app/student/student_log/student_weekSignatureScreen.dart';
 
-void main(){
-  runApp(book_week1_1());
-}
+// void main(){
+//   runApp(book_week1_1());
+// }
 
 
-class book_week1_1 extends StatelessWidget{
-  @override  
-  Widget build(BuildContext context ){
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: book_week1_2(),
-    );
-  }
-}
+// class book_week1_1 extends StatelessWidget{
+//   @override  
+//   Widget build(BuildContext context ){
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: book_week1_2(),
+//     );
+//   }
+// }
 
 class book_week1_2 extends StatefulWidget{
+  final String IpAddress;
+  final String candidate_num;
+  final String week;
+  final String day;
+  book_week1_2({ required this.IpAddress, required this.candidate_num, required this.week, required this.day });
   @override  
   book_week1_3 createState()=> book_week1_3();
 }
@@ -38,7 +43,7 @@ class book_week1_3 extends State<book_week1_2>{
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
-              bookContainer_week1_1()
+              bookContainer_week1_1(IpAddress: widget.IpAddress, candidate_num: widget.candidate_num, week: widget.week, day: widget.day)
             ],
           ),
         ),
@@ -65,14 +70,19 @@ PreferredSizeWidget BookWeekAppBar(BuildContext context ){
 
 
 class bookContainer_week1_1 extends StatefulWidget{
+    final String IpAddress;
+  final String candidate_num;
+  final String week;
+  final String day;
+  bookContainer_week1_1({ required this.IpAddress, required this.candidate_num, required this.week, required this.day });  
   @override  
   bookContainer_week1_2 createState()=> bookContainer_week1_2();
 }
 
 class bookContainer_week1_2 extends State<bookContainer_week1_1>{
-  String week = "week 2";
-  String day = "weekly";
-  String candidate_num = "22050513090";
+  // String week = "week 2";
+  // String day = "weekly";
+  // String candidate_num = "22050513090";
   XFile? photoFilePath;
   ImagePicker picturePicker = ImagePicker();
   var  imageUrl = null;
@@ -90,7 +100,7 @@ class bookContainer_week1_2 extends State<bookContainer_week1_1>{
 
   //start of fetchingData function
   Future<void> fetchingData()async{
-    String candidate_table = candidate_num+"_book";
+    String candidate_table = widget.candidate_num+"_book";
     try{
       Dio dio = Dio(
         BaseOptions(
@@ -99,11 +109,11 @@ class bookContainer_week1_2 extends State<bookContainer_week1_1>{
         )
       );
 
-      var IpAddress = "192.168.201.102";
+      var IpAddress = widget.IpAddress;
       var dataSend = {
         "candidate_table":candidate_table,
-        "week": week,
-        "day": day
+        "week": widget.week,
+        "day": widget.day
       };
 
       var UrlSend = "http://${IpAddress}/project_app/student_book_retrieve.php";
@@ -185,12 +195,12 @@ class bookContainer_week1_2 extends State<bookContainer_week1_1>{
           receiveTimeout: Duration(seconds: 15)
         )
       );
-      String candidate_table = candidate_num+"_book";
-      var IpAdress = "192.168.201.102";
+      String candidate_table = widget.candidate_num+"_book";
+      var IpAdress = widget.IpAddress;
       var sendData = {
         "IpAdress": IpAdress,
-        "week": week,
-        "day": day,
+        "week": widget.week,
+        "day": widget.day,
         "candidate_table": candidate_table
       };
 
@@ -278,12 +288,12 @@ class bookContainer_week1_2 extends State<bookContainer_week1_1>{
           receiveTimeout: Duration(seconds: 15)
         )
       );
-      String candidate_table = candidate_num+"_book";
-      var IpAddress = "192.168.201.102";
+      String candidate_table = widget.candidate_num+"_book";
+      var IpAddress = widget.IpAddress;
       FormData dataSend = FormData.fromMap({
         "image_url": await MultipartFile.fromFile(photoFilePath!.path),
-        "week":week,
-        "day":day,
+        "week": widget.week,
+        "day": widget.day,
         "activityWeek":activityWeekController.text,
         "date_time":dateController.text,
         "candidate_table":candidate_table,        
@@ -450,7 +460,7 @@ class bookContainer_week1_2 extends State<bookContainer_week1_1>{
 
   //start of checking signature function
   Future<void> checkingUploading() async {
-    String candidate_table = candidate_num+"_book";
+    String candidate_table = widget.candidate_num+"_book";
     // String sign = "sign";
     try{
       Dio dio = Dio(
@@ -459,11 +469,11 @@ class bookContainer_week1_2 extends State<bookContainer_week1_1>{
           receiveTimeout: Duration(seconds: 15)
         )
       );
-      var IpAddress = "192.168.201.102";
+      var IpAddress = widget.IpAddress;
       var dataSend = {
         "candidate_table": candidate_table,
-        "week": week,
-        "day": day,
+        "week": widget.week,
+        "day": widget.day,
       };
 
       var UrlSend = "http://${IpAddress}/project_app/student_book_checkUpload.php";
@@ -485,7 +495,7 @@ class bookContainer_week1_2 extends State<bookContainer_week1_1>{
             final result = await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context)=>SignatureScreen(IpAddress: IpAddress, candidate_table: candidate_table, week: week, day: day)
+                builder: (context)=>SignatureScreen(IpAddress: IpAddress, candidate_table: candidate_table, week: widget.week, day: widget.day)
               )
             );
 
@@ -534,7 +544,7 @@ class bookContainer_week1_2 extends State<bookContainer_week1_1>{
 
   // start of signature picture
   Future<void> pictureFunction() async {
-    String candidate_table = candidate_num+"_book";
+    String candidate_table = widget.candidate_num+"_book";
     try{
       Dio dio = Dio(
         BaseOptions(
@@ -542,11 +552,11 @@ class bookContainer_week1_2 extends State<bookContainer_week1_1>{
           receiveTimeout: Duration(seconds: 15)
         )
       );
-      var IpAddress = "192.168.201.102";
+      var IpAddress = widget.IpAddress;
       var dataSend = {
         "IpAddress": IpAddress,
-        "week": week,
-        "day": day,
+        "week": widget.week,
+        "day": widget.day,
         "candidate_table": candidate_table
       };
 

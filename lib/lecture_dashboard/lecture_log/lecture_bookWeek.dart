@@ -3,22 +3,27 @@ import "package:dio/dio.dart";
 import 'package:project_app/lecture_dashboard/lecture_log/lecture_weekSignatureScreen.dart';
 
 
-void main(){
-  runApp(lecture_book_week1_1());
-}
+// void main(){
+//   runApp(lecture_book_week1_1());
+// }
 
 
-class lecture_book_week1_1 extends StatelessWidget{
-  @override  
-  Widget build(BuildContext context ){
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: lecture_book_week1_2(),
-    );
-  }
-}
+// class lecture_book_week1_1 extends StatelessWidget{
+//   @override  
+//   Widget build(BuildContext context ){
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: lecture_book_week1_2(),
+//     );
+//   }
+// }
 
 class lecture_book_week1_2 extends StatefulWidget{
+  final String IpAddress;
+  final String candidate_num;
+  final String week;
+  final String day;
+  lecture_book_week1_2({ required this.IpAddress, required this.candidate_num, required this.week, required this.day });
   @override  
   lecture_book_week1_3 createState()=> lecture_book_week1_3();
 }
@@ -35,7 +40,7 @@ class lecture_book_week1_3 extends State<lecture_book_week1_2>{
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
-              lecture_bookContainer_week1_1()
+              lecture_bookContainer_week1_1(IpAddress: widget.IpAddress, candidate_num: widget.candidate_num, week: widget.week, day: widget.day)
             ],
           ),
         ),
@@ -61,7 +66,12 @@ PreferredSizeWidget LectureBookWeekAppBar(BuildContext context ){
 }
 
 
-class lecture_bookContainer_week1_1 extends StatefulWidget{
+class lecture_bookContainer_week1_1 extends StatefulWidget{  final String IpAddress;
+  final String candidate_num;
+  final String week;
+  final String day;
+  lecture_bookContainer_week1_1({ required this.IpAddress, required this.candidate_num, required this.week, required this.day });
+
   @override  
   lecture_bookContainer_week1_2 createState()=> lecture_bookContainer_week1_2();
 }
@@ -70,9 +80,9 @@ class lecture_bookContainer_week1_2 extends State<lecture_bookContainer_week1_1>
   String? industrialSignatureUrl = null;
   String? collegeSignatureUrl = null;
   var  imageUrl = null;
-  String week = "week 2";
-  String day = "weekly";
-  String candidate_num = "22050513090";  
+  // String week = "week 2";
+  // String day = "weekly";
+  // String candidate_num = "22050513090";  
   GlobalKey keyBook = GlobalKey<FormState>();
   TextEditingController dateController = TextEditingController();
   TextEditingController activityWeekController = TextEditingController();
@@ -97,12 +107,12 @@ class lecture_bookContainer_week1_2 extends State<lecture_bookContainer_week1_1>
           receiveTimeout: Duration(seconds: 15)
         )
       );
-      String candidate_table = candidate_num+"_book";
-      var IpAdress = "192.168.201.102";
+      String candidate_table = widget.candidate_num+"_book";
+      var IpAdress = widget.IpAddress;
       var sendData = {
         "IpAdress": IpAdress,
-        "week": week,
-        "day": day,
+        "week": widget.week,
+        "day": widget.day,
         "candidate_table": candidate_table
       };
 
@@ -170,7 +180,7 @@ class lecture_bookContainer_week1_2 extends State<lecture_bookContainer_week1_1>
 
   //start of the function retrievingdata
   Future<void> retrievingData() async {
-    String candidate_table = candidate_num+"_book";
+    String candidate_table = widget.candidate_num+"_book";
     try{
       Dio dio = Dio(
         BaseOptions(
@@ -179,10 +189,10 @@ class lecture_bookContainer_week1_2 extends State<lecture_bookContainer_week1_1>
         )
       );
 
-      var IpAddress = "192.168.201.102";
+      var IpAddress = widget.IpAddress;
       var SendingData = {
-        "week": week,
-        "day": day,
+        "week": widget.week,
+        "day": widget.day,
         "candidate_table":candidate_table
       };
       var UrlSend = "http://${IpAddress}/project_app/lecture_book.php";
@@ -235,7 +245,7 @@ class lecture_bookContainer_week1_2 extends State<lecture_bookContainer_week1_1>
 
   // start of signature picture
   Future<void> pictureFunction() async {
-    String candidate_table = candidate_num+"_book";
+    String candidate_table = widget.candidate_num+"_book";
     try{
       Dio dio = Dio(
         BaseOptions(
@@ -243,11 +253,11 @@ class lecture_bookContainer_week1_2 extends State<lecture_bookContainer_week1_1>
           receiveTimeout: Duration(seconds: 15)
         )
       );
-      var IpAddress = "192.168.201.102";
+      var IpAddress = widget.IpAddress;
       var dataSend = {
         "IpAddress": IpAddress,
-        "week": week,
-        "day": day,
+        "week": widget.week,
+        "day": widget.day,
         "candidate_table": candidate_table
       };
 
@@ -347,7 +357,7 @@ class lecture_bookContainer_week1_2 extends State<lecture_bookContainer_week1_1>
 
   //start of checking signature function
   Future<void> checkingUploading() async {
-    String candidate_table = candidate_num+"_book";
+    String candidate_table = widget.candidate_num+"_book";
     // String sign = "sign";
     try{
       Dio dio = Dio(
@@ -356,11 +366,11 @@ class lecture_bookContainer_week1_2 extends State<lecture_bookContainer_week1_1>
           receiveTimeout: Duration(seconds: 15)
         )
       );
-      var IpAddress = "192.168.201.102";
+      var IpAddress = widget.IpAddress;
       var dataSend = {
         "candidate_table": candidate_table,
-        "week": week,
-        "day": day,
+        "week": widget.week,
+        "day": widget.day,
       };
 
       var UrlSend = "http://${IpAddress}/project_app/lecture_book_checkUpload.php";
@@ -382,7 +392,7 @@ class lecture_bookContainer_week1_2 extends State<lecture_bookContainer_week1_1>
             final result = await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context)=>SignatureScreen(IpAddress: IpAddress, candidate_table: candidate_table, week: week, day: day)
+                builder: (context)=>SignatureScreen(IpAddress: IpAddress, candidate_table: candidate_table, week: widget.week, day: widget.day)
               )
             );
 
@@ -432,7 +442,7 @@ class lecture_bookContainer_week1_2 extends State<lecture_bookContainer_week1_1>
 
   // start of college signature picture
   Future<void> pictureCollegeFunction() async {
-    String candidate_table = candidate_num+"_book";
+    String candidate_table = widget.candidate_num+"_book";
     try{
       Dio dio = Dio(
         BaseOptions(
@@ -440,11 +450,11 @@ class lecture_bookContainer_week1_2 extends State<lecture_bookContainer_week1_1>
           receiveTimeout: Duration(seconds: 15)
         )
       );
-      var IpAddress = "192.168.201.102";
+      var IpAddress = widget.IpAddress;
       var dataSend = {
         "IpAddress": IpAddress,
-        "week": week,
-        "day": day,
+        "week": widget.week,
+        "day": widget.day,
         "candidate_table": candidate_table
       };
 

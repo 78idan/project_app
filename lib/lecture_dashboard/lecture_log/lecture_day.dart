@@ -266,10 +266,11 @@ class lecture_dayContainer1_2 extends State<lecture_dayContainer1_1>{
           GestureDetector(
             onTap: (){
               // print("Weekly Report");
+              String day = "weekly";
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context)=>lecture_book_week1_2()
+                  builder: (context)=>lecture_book_week1_2(IpAddress: widget.IpAddress, candidate_num: widget.candidate_num, week: widget.week, day: day)
                 )
               );
             },
