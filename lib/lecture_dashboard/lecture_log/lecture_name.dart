@@ -2,21 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:project_app/lecture_dashboard/lecture_log/lecture_week.dart';
 import "package:dio/dio.dart";
 
-void main(){
-  runApp(student_no1_1());
-}
+// void main(){
+//   runApp(student_no1_1());
+// }
 
-class student_no1_1 extends StatelessWidget{
-  @override  
-  Widget build(BuildContext context ){
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: student_no1_2(),
-    );
-  }
-}
+// class student_no1_1 extends StatelessWidget{
+//   @override  
+//   Widget build(BuildContext context ){
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: student_no1_2(),
+//     );
+//   }
+// }
 
 class student_no1_2 extends StatefulWidget{
+  final String IpAddress;
+  student_no1_2({required this.IpAddress });
   @override  
   student_no1_3 createState()=> student_no1_3();
 }
@@ -33,7 +35,7 @@ class student_no1_3 extends State<student_no1_2>{
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
-              student_noContainer1_1()
+              student_noContainer1_1(IpAddress: widget.IpAddress)
             ],
           ),
         ),
@@ -59,6 +61,8 @@ PreferredSizeWidget StudentNoAppBar(BuildContext context ){
 }
 
 class student_noContainer1_1 extends StatefulWidget{
+  final String IpAddress;
+  student_noContainer1_1({required this.IpAddress });  
   @override  
   student_noContainer1_2 createState()=> student_noContainer1_2();
 }
@@ -84,7 +88,7 @@ class student_noContainer1_2 extends State<student_noContainer1_1>{
         )
       );
       String region = "Arusha";
-      var IpAddress = "192.168.108.102";
+      var IpAddress = widget.IpAddress;
       var dataSent = {
         "region": region
       };
@@ -161,7 +165,7 @@ class student_noContainer1_2 extends State<student_noContainer1_1>{
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context)=>lecture_week1_2()
+                      builder: (context)=>lecture_week1_2(IpAddress: widget.IpAddress, candidate_num: candidates_no[index])
                     )
                   );
                 },

@@ -23,7 +23,8 @@ import 'package:project_app/student/student_log/student_week.dart';
 class student_home1_2 extends StatefulWidget{
   final String IpAddress;
   final String candidee_num;
-  student_home1_2({ required this.IpAddress , required this.candidee_num });  
+  final String nameIdentity;
+  student_home1_2({ required this.IpAddress , required this.candidee_num, required this.nameIdentity });  
   @override  
   student_home1_3 createState()=> student_home1_3();
 
@@ -161,7 +162,7 @@ class student_home1_3 extends State<student_home1_2>{
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context)=>week1_2()
+              builder: (context)=>week1_2(candidate_num: widget.candidee_num, IpAddress: widget.IpAddress, candidate_level: candidee_level, nameIdentity: widget.nameIdentity, )
             )
           );
         },

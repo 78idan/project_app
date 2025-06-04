@@ -93,7 +93,7 @@ class form1_1 extends State<form1>{
   String ErrorText="";
   TextEditingController admissionController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  var IpAddress = "192.168.108.102";
+  var IpAddress = "192.168.201.102";
 
   bool isbscure = true;
   //starting of function of validation
@@ -141,12 +141,14 @@ class form1_1 extends State<form1>{
         widget.onloading(false);
         // print(response.data);
         var receiveData = response.data;
+        var nameIdentifier = receiveData['name'];
+        print(response.data);
 
         if(receiveData['message'] == "student"){
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context)=>student_dashboard1_2(IpAddress: IpAddress, candidee_num: admissionController.text,)
+              builder: (context)=>student_dashboard1_2(IpAddress: IpAddress, candidee_num: admissionController.text,nameIdentity: nameIdentifier,)
             )
           );
         }else if(receiveData['message'] == "lecture"){

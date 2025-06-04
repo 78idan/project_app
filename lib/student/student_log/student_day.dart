@@ -19,6 +19,11 @@ import 'package:project_app/student/student_log/student_bookWeek.dart';
 // }
 
 class day1_2 extends StatefulWidget{
+  final String candidate_num;
+  final String IpAddress;
+  final String candidate_level;
+  final String week;
+  day1_2({required this.candidate_num, required this.IpAddress, required this.candidate_level, required this.week });  
   @override  
   day1_3 createState()=> day1_3();
 }
@@ -35,7 +40,7 @@ class day1_3 extends State<day1_2>{
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
-              dayContainer1_1()
+              dayContainer1_1(candidate_num: widget.candidate_num, IpAddress: widget.IpAddress, candidate_level: widget.candidate_level, week: widget.week)
             ],
           ),
         ),
@@ -61,6 +66,11 @@ PreferredSizeWidget DayAppBar(BuildContext context ){
 }
 
 class dayContainer1_1 extends StatefulWidget{
+  final String candidate_num;
+  final String IpAddress;
+  final String candidate_level;
+  final String week;
+  dayContainer1_1({required this.candidate_num, required this.IpAddress, required this.candidate_level, required this.week });   
   @override  
   dayContainer1_2 createState()=> dayContainer1_2();
 }
@@ -77,11 +87,11 @@ class dayContainer1_2 extends State<dayContainer1_1>{
         children: [
           GestureDetector(
             onTap: (){
-              // print("Monday");
+              String day = "monday";
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context)=> book1_2()
+                  builder: (context)=> book1_2(candidate_num: widget.candidate_num, IpAddress: widget.IpAddress, candidate_level: widget.candidate_level, week: widget.week, day: day)
                 )
               );
             },
@@ -112,7 +122,14 @@ class dayContainer1_2 extends State<dayContainer1_1>{
           SizedBox(height: 5,),
           GestureDetector(
             onTap: (){
-              print("Tuesday");
+              // print("Tuesday");
+              String day = "tuesday";
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context)=> book1_2(candidate_num: widget.candidate_num, IpAddress: widget.IpAddress, candidate_level: widget.candidate_level, week: widget.week, day: day)
+                )
+              );              
             },
             child: Container(
               height: 80,
@@ -141,7 +158,14 @@ class dayContainer1_2 extends State<dayContainer1_1>{
           SizedBox(height: 5,),
           GestureDetector(
             onTap: (){
-              print("Wednesday");
+              // print("Wednesday");
+              String day = "wednesday";
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context)=> book1_2(candidate_num: widget.candidate_num, IpAddress: widget.IpAddress, candidate_level: widget.candidate_level, week: widget.week, day: day)
+                )
+              );              
             },
             child: Container(
               height: 80,
@@ -170,7 +194,14 @@ class dayContainer1_2 extends State<dayContainer1_1>{
           SizedBox(height: 5,),
           GestureDetector(
             onTap: (){
-              print("Thursday");
+              // print("Thursday");
+              String day = "thursday";
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context)=> book1_2(candidate_num: widget.candidate_num, IpAddress: widget.IpAddress, candidate_level: widget.candidate_level, week: widget.week, day: day)
+                )
+              );              
             },
             child: Container(
               height: 80,
@@ -199,7 +230,14 @@ class dayContainer1_2 extends State<dayContainer1_1>{
           SizedBox(height: 5,),
           GestureDetector(
             onTap: (){
-              print("Friday");
+              // print("Friday");
+              String day = "friday";
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context)=> book1_2(candidate_num: widget.candidate_num, IpAddress: widget.IpAddress, candidate_level: widget.candidate_level, week: widget.week, day: day)
+                )
+              );              
             },
             child: Container(
               height: 80,

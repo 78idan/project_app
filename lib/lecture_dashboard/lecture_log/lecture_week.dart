@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:weeklist/day.dart';
 import 'package:project_app/lecture_dashboard/lecture_log/lecture_day.dart';
+import 'package:dio/dio.dart';
 // void main(){
 //   runApp(
 //     lecture_week1_1()
@@ -19,6 +20,9 @@ import 'package:project_app/lecture_dashboard/lecture_log/lecture_day.dart';
 // }
 
 class lecture_week1_2 extends StatefulWidget{
+  final String IpAddress;
+  final String candidate_num;
+  lecture_week1_2({required this.IpAddress, required this.candidate_num });
   @override  
   lecture_week1_3 createState()=> lecture_week1_3();
 }
@@ -39,7 +43,7 @@ class lecture_week1_3 extends State<lecture_week1_2>{
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    lecture_example1()
+                    lecture_example1(IpAddress: widget.IpAddress, candidate_num: widget.candidate_num)
                   ],
                 ),
               )
@@ -50,7 +54,7 @@ class lecture_week1_3 extends State<lecture_week1_2>{
                 child: Column(
                   children: [
                     // Text("Hello")
-                    lecture_report1_1()
+                    lecture_report1_1(IpAddress: widget.IpAddress, candidate_num: widget.candidate_num)
                   ],
                 ),
               ),
@@ -100,6 +104,9 @@ PreferredSizeWidget LectureweekAppBar(BuildContext context){
 
 
 class lecture_example1 extends StatefulWidget{
+  final String IpAddress;
+  final String candidate_num;
+  lecture_example1({required this.IpAddress, required this.candidate_num });  
   @override   
   lecture_example1_1 createState()=> lecture_example1_1();
 }
@@ -117,11 +124,12 @@ class lecture_example1_1 extends State<lecture_example1>{
                       children: [
                         GestureDetector(
                           onTap: (){
+                            String week = "week 1";
                             // print("Thank God");
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context)=>lecture_day1_2()
+                                builder: (context)=>lecture_day1_2(IpAddress: widget.IpAddress, candidate_num: widget.candidate_num, week: week)
                               )
                             );
                           },
@@ -157,11 +165,12 @@ class lecture_example1_1 extends State<lecture_example1>{
                         ),
                         GestureDetector(
                           onTap: (){
+                            String week = "week 2";
                             // print("Thank God");
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context)=>lecture_day1_2()
+                                builder: (context)=>lecture_day1_2(IpAddress: widget.IpAddress, candidate_num: widget.candidate_num, week: week)
                               )
                             );                            
                           },
@@ -197,11 +206,12 @@ class lecture_example1_1 extends State<lecture_example1>{
                         ), 
                         GestureDetector(
                           onTap: (){
+                            String week = "week 3";
                             // print("Thank God");
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context)=>lecture_day1_2()
+                                builder: (context)=>lecture_day1_2(IpAddress: widget.IpAddress, candidate_num: widget.candidate_num, week: week)
                               )
                             );                            
                           },
@@ -237,11 +247,12 @@ class lecture_example1_1 extends State<lecture_example1>{
                         ),
                         GestureDetector(
                           onTap: (){
+                            String week = "week 4";
                             // print("Thank God");
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context)=>lecture_day1_2()
+                                builder: (context)=>lecture_day1_2(IpAddress: widget.IpAddress, candidate_num: widget.candidate_num, week: week)
                               )
                             );                            
                           },
@@ -277,11 +288,12 @@ class lecture_example1_1 extends State<lecture_example1>{
                         ),
                         GestureDetector(
                           onTap: (){
+                            String week = "week 5";
                             // print("Thank God");
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context)=>lecture_day1_2()
+                                builder: (context)=>lecture_day1_2(IpAddress: widget.IpAddress, candidate_num: widget.candidate_num, week: week)
                               )
                             );                            
                           },
@@ -317,11 +329,12 @@ class lecture_example1_1 extends State<lecture_example1>{
                         ), 
                         GestureDetector(
                           onTap: (){
+                            String week = "week 6";
                             // print("Thank God");
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context)=>lecture_day1_2()
+                                builder: (context)=>lecture_day1_2(IpAddress: widget.IpAddress, candidate_num: widget.candidate_num, week: week)
                               )
                             );                            
                           },
@@ -357,11 +370,12 @@ class lecture_example1_1 extends State<lecture_example1>{
                         ),
                         GestureDetector(
                           onTap: (){
+                            String week = "week 7";
                             // print("Thank God");
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context)=>lecture_day1_2()
+                                builder: (context)=>lecture_day1_2(IpAddress: widget.IpAddress, candidate_num: widget.candidate_num, week: week)
                               )
                             );                            
                           },
@@ -397,11 +411,12 @@ class lecture_example1_1 extends State<lecture_example1>{
                         ),
                         GestureDetector(
                           onTap: (){
+                            String week = "week 8";
                             // print("Thank God");
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context)=>lecture_day1_2()
+                                builder: (context)=>lecture_day1_2(IpAddress: widget.IpAddress, candidate_num: widget.candidate_num, week: week)
                               )
                             );                            
                           },
@@ -437,11 +452,12 @@ class lecture_example1_1 extends State<lecture_example1>{
                         ),
                         GestureDetector(
                           onTap: (){
+                            String week = "week 9";
                             // print("Thank God");
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context)=>lecture_day1_2()
+                                builder: (context)=>lecture_day1_2(IpAddress: widget.IpAddress, candidate_num: widget.candidate_num, week: week)
                               )
                             );                            
                           },
@@ -477,11 +493,12 @@ class lecture_example1_1 extends State<lecture_example1>{
                         ), 
                         GestureDetector(
                           onTap: (){
+                            String week = "week 10";
                             // print("Thank God");
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context)=>lecture_day1_2()
+                                builder: (context)=>lecture_day1_2(IpAddress: widget.IpAddress, candidate_num: widget.candidate_num, week: week)
                               )
                             );                            
                           },
@@ -523,11 +540,100 @@ class lecture_example1_1 extends State<lecture_example1>{
 
 
 class lecture_report1_1 extends StatefulWidget{
+  final String IpAddress;
+  final String candidate_num;
+  lecture_report1_1({required this.IpAddress, required this.candidate_num });  
   @override  
   lecture_report1_2 createState()=> lecture_report1_2();
 }
 
 class lecture_report1_2 extends State<lecture_report1_1>{
+  TextEditingController streetController = TextEditingController();
+  TextEditingController regionController= TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController areaController = TextEditingController();
+  TextEditingController candidates_numController = TextEditingController(); 
+  
+  //start of void function
+  @override
+  void initState(){
+    super.initState();
+    retrieveReport();
+  }
+  //end of void function
+
+  //start of function to retrieve report
+  Future<void> retrieveReport() async {
+    try{
+      Dio dio = Dio(
+        BaseOptions(
+          connectTimeout: Duration(seconds: 15),
+          receiveTimeout: Duration(seconds: 15),
+        )
+      );
+
+      var IpAddress = widget.IpAddress;
+      var dataSend = {
+        "candidate_num": widget.candidate_num,
+      };
+
+      var UrlSend = "http://${IpAddress}/project_app/lecture_report.php";
+
+      Response response = await dio.post(
+        UrlSend,
+        data: FormData.fromMap(dataSend)
+      );
+
+      if(response.statusCode == 200){
+        // print(response.data);
+        var dataReceived = response.data;
+        if(dataReceived['message'] == "log taken"){
+          setState(() {
+            candidates_numController.text = dataReceived['candidate_num'];
+            phoneController.text = dataReceived['phone'];
+            streetController.text = dataReceived['street'];
+            areaController.text = dataReceived['area'];
+            regionController.text = dataReceived['region'];
+          });
+        }else{
+          print("Query Failed");
+        }
+      }
+
+    }catch(e){
+      if(e is DioException){
+        switch(e.type){
+          case DioExceptionType.connectionTimeout:
+               print("Connection TimeOut ${e.message} ");
+               break;
+          case DioExceptionType.connectionError:
+               print("connection Error: ${e.message}");
+               break;
+          case DioExceptionType.receiveTimeout:
+               print("receieve error: ${e.message} ");
+               break;
+          case DioExceptionType.sendTimeout:
+               print("send error: ${e.message} ");
+               break;
+          case DioExceptionType.badCertificate:
+               print("bad certificate ${e.message} ");
+               break;
+          case DioExceptionType.unknown:
+               print("unknow error: ${e.message} ");
+               break;
+          case DioExceptionType.cancel:
+               print("cancel error: ${e.message} ");
+               break;
+          default:
+                print("default error: ${e.message} ");
+                break;                    
+        }
+      }else{
+        print("else error: $e");
+      }      
+    }
+  }
+  //end of function to retrieve report
 
   List<String> regionList = ["Arusha","Kilimanjaro","Singida","Loliondo","Ruvuma","Songwe","Manyara"];
   String? valueRegion;
@@ -549,8 +655,9 @@ class lecture_report1_2 extends State<lecture_report1_1>{
                   style: TextStyle(
                     color: Colors.white
                   ),
+                  controller: candidates_numController,
                   decoration: InputDecoration(
-                    hintText: "Name.......",
+                    hintText: "Admission Number......",
                     hintStyle: TextStyle(
                       color: Colors.white70
                     ),
@@ -575,6 +682,7 @@ class lecture_report1_2 extends State<lecture_report1_1>{
                   style: TextStyle(
                     color: Colors.white
                   ),
+                  controller: phoneController,
                   decoration: InputDecoration(
                     hintText: "Phone Number",
                     hintStyle: TextStyle(
@@ -601,6 +709,7 @@ class lecture_report1_2 extends State<lecture_report1_1>{
                   style: TextStyle(
                     color: Colors.white
                   ),
+                  controller: regionController,
                   decoration: InputDecoration(
                     hintText: "Region",
                     hintStyle: TextStyle(
@@ -672,6 +781,7 @@ class lecture_report1_2 extends State<lecture_report1_1>{
                   style: TextStyle(
                     color: Colors.white
                   ),
+                  controller: streetController,
                   decoration: InputDecoration(
                     hintText: "Street",
                     hintStyle: TextStyle(
@@ -706,6 +816,7 @@ class lecture_report1_2 extends State<lecture_report1_1>{
                           style: TextStyle(
                             color: Colors.white
                           ),
+                          controller: areaController,
                           expands: true,
                           keyboardType: TextInputType.multiline,
                           textAlignVertical: TextAlignVertical.top,

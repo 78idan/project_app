@@ -23,7 +23,8 @@ import 'package:project_app/student/student_profile.dart';
 class student_dashboard1_2 extends StatefulWidget{
   final String IpAddress;
   final String candidee_num;
-  student_dashboard1_2({required this.IpAddress, required this.candidee_num });
+  final String nameIdentity;
+  student_dashboard1_2({required this.IpAddress, required this.candidee_num, required this.nameIdentity });
   @override  
   student_dashboard1_3 createState()=> student_dashboard1_3();
 }
@@ -54,7 +55,7 @@ class student_dashboard1_3 extends State<student_dashboard1_2>{
   @override  
   Widget build(BuildContext context ){
   List pages = [
-    student_home1_2(IpAddress: IpAddress, candidee_num: candidee_num),
+    student_home1_2(IpAddress: IpAddress, candidee_num: candidee_num,nameIdentity: widget.nameIdentity,),
     student_profile1_2(IpAddress: IpAddress, candidee_num: candidee_num)
   ];    
     return Scaffold(

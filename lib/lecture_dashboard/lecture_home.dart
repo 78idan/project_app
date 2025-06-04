@@ -159,7 +159,7 @@ class lecture_home1_3 extends State<lecture_home1_2>{
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context)=>student_no1_2()
+              builder: (context)=>student_no1_2(IpAddress: widget.IpAddress)
             )
           );
         },

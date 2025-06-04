@@ -147,6 +147,7 @@ Future<void> registerStudent() async{
           var dataReceived = response.data;
           if (dataReceived['message'] == "Registered"){
             customNotification.notificationCustom(context, message: dataReceived['message'],picIcon: Icon(Icons.check_circle,color: Colors.white,size: 14,));
+            
           }else{
             customNotification.notificationCustom(context, message: dataReceived['message']);
           }
