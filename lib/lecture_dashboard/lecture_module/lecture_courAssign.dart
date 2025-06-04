@@ -142,7 +142,8 @@ class course_video1_2 extends State<course_video1_1>{
       );
       var url = "http://${IpAddress}/project_app/lecture_courVideo.php";
       var dataSend = {
-        "Table_name": module_name
+        "Table_name": module_name,
+        "IpAddress": IpAddress,
       };
 
       Response response = await dio.post(

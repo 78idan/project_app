@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project_app/student/student_module/student_module.dart';
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 import 'package:project_app/student/student_log/student_week.dart';
 
 // void main(){
@@ -119,6 +120,90 @@ class student_home1_3 extends State<student_home1_2>{
   }
   //end of function to retrieve name for profile page  
 
+  // start of check Ipt function
+  Future<void> check_Ipt() async {
+    String check = "hey";
+    try{
+      Dio dio = Dio(
+        BaseOptions(
+          connectTimeout: Duration(seconds: 15),
+          receiveTimeout: Duration(seconds: 15)
+        )
+      );
+      var IpAddress = widget.IpAddress;
+      var UrlIpt = "http://${IpAddress}/project_app/check_ipt.php";
+      DateTime RecentDate = DateTime.parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
+      var dataSent = {
+        "check": check
+      };
+
+      Response response = await dio.post(
+        UrlIpt,
+        data: FormData.fromMap(dataSent)
+      );
+
+      if(response.statusCode == 200){
+        // print(response.data);
+        var dateRecieved = response.data;
+        if (dateRecieved['message'] == "chosen ipt"){
+          String startingDate = dateRecieved['start'];
+          String endingDate = dateRecieved['end'];
+          DateTime? start = DateTime.tryParse(startingDate);
+          DateTime? end = DateTime.tryParse(endingDate);
+          
+          if(RecentDate.isBefore(start!)){
+            // print("Thank God");
+            customNotification.notificationCustom(context, message: "The session is not yet opened");
+          }else if(RecentDate.isAfter(end!)){
+            customNotification.notificationCustom(context, message: "The session has been closed");
+          }else{
+            // print("Thank God twice");
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context)=>week1_2(candidate_num: widget.candidee_num, IpAddress: widget.IpAddress, candidate_level: candidee_level, nameIdentity: widget.nameIdentity, )
+            )
+          );           
+          }
+
+        }
+      }
+
+    }catch(e){
+      if(e is DioException){
+        switch(e.type){
+          case DioExceptionType.connectionTimeout:
+               print("connectionTimeOut : ${e.message}");
+               break;
+          case DioExceptionType.connectionError:
+               print("connectionError: ${e.message} ");
+               break;
+          case DioExceptionType.sendTimeout:
+               print("sendTimeOut: ${e.message}");
+               break;
+          case DioExceptionType.receiveTimeout:
+               print("receive TimeOut: ${e.message} ");
+               break;
+          case DioExceptionType.badCertificate:
+               print("certificate: ${e.message} ");
+               break;
+          case DioExceptionType.badResponse:
+               print("bad response: ${e.message} ");
+               break;
+          case DioExceptionType.unknown:
+               print("Unknown error: ${e.message} ");
+               break;
+          default:
+               print("default error: ${e.message} ");
+               break;                                    
+        }
+      }else{
+        print("else error: $e");
+      }      
+    }
+  }
+  // start of check Ipt function  
+
   List<Widget> gridWidget (BuildContext context) {
     return [
       GestureDetector(
@@ -159,17 +244,12 @@ class student_home1_3 extends State<student_home1_2>{
       GestureDetector(
         onTap: (){
           // print("Industrial Practical training");
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context)=>week1_2(candidate_num: widget.candidee_num, IpAddress: widget.IpAddress, candidate_level: candidee_level, nameIdentity: widget.nameIdentity, )
-            )
-          );
+          check_Ipt();
         },
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            color: Colors.yellow
+            color: Color(0xFFF7DC6F),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

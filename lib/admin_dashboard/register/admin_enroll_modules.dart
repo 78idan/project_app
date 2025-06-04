@@ -132,8 +132,10 @@ Future<void> registerModules() async{
           // print(response.data);
           var dataReceived = response.data;
           if (dataReceived['message'] == "module enrolled"){
+            LectureAdmissionNumber.clear();
             customNotification.notificationCustom(context, message: dataReceived['message'],picIcon: Icon(Icons.check_circle,color: Colors.white,size: 14,));
           }else{
+            LectureAdmissionNumber.clear();
             customNotification.notificationCustom(context, message: dataReceived['message']);
           }
         }

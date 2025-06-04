@@ -36,7 +36,7 @@ class lecture_home1_3 extends State<lecture_home1_2>{
   String role = "";
 
   // String lecture_admissionNumber = "22050513037";
-
+  // start of check Ipt function
   Future<void> check_Ipt() async {
     String check = "hey";
     try{
@@ -73,7 +73,13 @@ class lecture_home1_3 extends State<lecture_home1_2>{
           }else if(RecentDate.isAfter(end!)){
             customNotification.notificationCustom(context, message: "The session has been closed");
           }else{
-            print("Thank God twice");
+            // print("Thank God twice");
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context)=>student_no1_2(IpAddress: widget.IpAddress)
+              )
+            );            
           }
 
         }
@@ -112,6 +118,7 @@ class lecture_home1_3 extends State<lecture_home1_2>{
       }      
     }
   }
+  // start of check Ipt function
 
 
   // start list container function
@@ -155,13 +162,7 @@ class lecture_home1_3 extends State<lecture_home1_2>{
       GestureDetector(
         onTap: (){
           // print("Industrial section");
-          // check_Ipt();
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context)=>student_no1_2(IpAddress: widget.IpAddress)
-            )
-          );
+          check_Ipt();
         },
         child: Container(
           decoration: BoxDecoration(

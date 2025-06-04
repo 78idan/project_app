@@ -146,9 +146,19 @@ Future<void> registerStudent() async{
           // print(response.data);
           var dataReceived = response.data;
           if (dataReceived['message'] == "Registered"){
+            fname.clear();
+            lname.clear();
+            sname.clear();
+            email.clear();
+            admissionNumber.clear();            
             customNotification.notificationCustom(context, message: dataReceived['message'],picIcon: Icon(Icons.check_circle,color: Colors.white,size: 14,));
             
           }else{
+            fname.clear();
+            lname.clear();
+            sname.clear();
+            email.clear();
+            admissionNumber.clear();            
             customNotification.notificationCustom(context, message: dataReceived['message']);
           }
         }

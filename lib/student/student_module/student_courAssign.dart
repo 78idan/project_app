@@ -311,7 +311,8 @@ Future<void> _verifyDownloadedFiles() async {
         print(module_name);
         var IpAddress = widget.IpAddress ;
         var dataSend = {
-          "Table_name": module_name
+          "Table_name": module_name,
+          "IpAddress": IpAddress
         };
         var urlDataSend = "http://${IpAddress}/project_app/student_courAssign.php";
         Response response = await dio.post(

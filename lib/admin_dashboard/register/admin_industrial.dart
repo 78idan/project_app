@@ -171,8 +171,14 @@ Future<void> registerIndustrial() async{
           // print(response.data);
           var dataReceived = response.data;
           if (dataReceived['message'] == "supervisors enrolled"){
+            LectureAdmissionNumber1.clear();
+            LectureAdmissionNumber2.clear();
+            LectureAdmissionNumber3.clear();           
             customNotification.notificationCustom(context, message: dataReceived['message'],picIcon: Icon(Icons.check_circle,color: Colors.white,size: 14,));
           }else{
+            LectureAdmissionNumber1.clear();
+            LectureAdmissionNumber2.clear();
+            LectureAdmissionNumber3.clear();             
             customNotification.notificationCustom(context, message: dataReceived['message']);
           }
         }
@@ -421,6 +427,86 @@ class scheduleTextField1_2 extends State<scheduleTextField1_1>{
   TextEditingController startingDate = TextEditingController();
   TextEditingController endingDate = TextEditingController();
   final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+
+  //start of void function
+  @override  
+  void initState(){
+    super.initState();
+    retrieveDate();
+  }
+  //end of void function
+
+  //start of retrieving date data
+  Future<void> retrieveDate() async {
+    String dateData = "date retrieved";
+    try{
+      Dio dio = Dio(
+        BaseOptions(
+          connectTimeout: Duration(seconds: 15),
+          receiveTimeout: Duration(seconds: 15)
+        )
+      );
+      var IpAddress = widget.IpAddress;
+      var dataSend = {
+        "dateData": dateData
+      };
+
+      var UrlSend = "http://${IpAddress}/project_app/date_retrieve.php";
+
+      Response response = await dio.post(
+        UrlSend,
+        data: FormData.fromMap(dataSend)
+      );
+
+      if(response.statusCode == 200){
+        print("Thank God");
+        print(response.data);
+        var dataReceived = response.data;
+        if(dataReceived['message'] == "date not empty"){
+          setState(() {
+            startingDate.text = dataReceived['startingDate'];
+            endingDate.text = dataReceived['endingDate'];
+          });
+        }else{
+          print("Data empty");
+        }
+      }
+
+
+    }catch(e){
+        if (e is DioException){
+          switch(e.type){
+            case DioExceptionType.connectionTimeout:
+                 print("connection timeout ${e.message} ");
+                 break;
+            case DioExceptionType.connectionError:
+                 print("connection error ${e.message}");
+                 break;
+            case DioExceptionType.sendTimeout:
+                 print("send TimeOut ${e.message} ");
+                 break;
+            case DioExceptionType.receiveTimeout:
+                 print("receive timeOut ${e.message}");
+                 break;
+            case DioExceptionType.badCertificate:
+                 print("bad certificate ${e.message} ");
+                 break;
+            case DioExceptionType.badResponse:
+                 print("bad response ${e.message}  ");
+                 break;
+            case DioExceptionType.unknown:
+                 print("unknown error ${e.toString()} ");
+                 break;
+            default:
+                  print("default error ${e.message} ");
+                  break;                                   
+          }
+        }else{
+          print(" Error $e");
+        }      
+    }
+  }
+  //end of retrieving date data
 //start of validation function
 Future<void> validateScheduleRegister() async {
   if(startingDate.text.isEmpty){
@@ -495,10 +581,12 @@ Future<void> registerSchedule() async{
             startingDate.clear();
             endingDate.clear();
             customNotification.notificationCustom(context, message: dataReceived['message'],picIcon: Icon(Icons.check_circle,color: Colors.white,size: 14,));
+            retrieveDate();
           }else{
             startingDate.clear();
             endingDate.clear();            
             customNotification.notificationCustom(context, message: dataReceived['message']);
+            retrieveDate();
           }
         }
 
