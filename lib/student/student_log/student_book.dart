@@ -34,7 +34,7 @@ class book1_3 extends State<book1_2>{
   Widget build(BuildContext context ){
     return Scaffold(
       backgroundColor: Color(0xFF002147),
-      appBar: BookAppBar(context),
+      appBar: BookAppBar(context, widget.day),
       body: Padding(
         padding: EdgeInsets.all(16),
         child: SingleChildScrollView(
@@ -51,7 +51,7 @@ class book1_3 extends State<book1_2>{
 }
 
 
-PreferredSizeWidget BookAppBar(BuildContext context ){
+PreferredSizeWidget BookAppBar(BuildContext context, String day ){
   return AppBar(
     backgroundColor: Color(0xFF002147),
     leading: IconButton(
@@ -62,6 +62,12 @@ PreferredSizeWidget BookAppBar(BuildContext context ){
         Icons.arrow_back,
         color: Colors.white,
       ),
+    ),
+    title: Text(day,
+    style: TextStyle(
+      color: Colors.white,
+      fontFamily: "PlayfairDisplay"
+    ),
     ),
   );
 }

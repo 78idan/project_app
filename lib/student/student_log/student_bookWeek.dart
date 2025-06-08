@@ -36,7 +36,7 @@ class book_week1_3 extends State<book_week1_2>{
   Widget build(BuildContext context ){
     return Scaffold(
       backgroundColor: Color(0xFF002147),
-      appBar: BookWeekAppBar(context),
+      appBar: BookWeekAppBar(context, widget.day ),
       body: Padding(
         padding: EdgeInsets.all(16),
         child: SingleChildScrollView(
@@ -53,7 +53,7 @@ class book_week1_3 extends State<book_week1_2>{
 }
 
 
-PreferredSizeWidget BookWeekAppBar(BuildContext context ){
+PreferredSizeWidget BookWeekAppBar(BuildContext context, String day ){
   return AppBar(
     backgroundColor: Color(0xFF002147),
     leading: IconButton(
@@ -64,6 +64,12 @@ PreferredSizeWidget BookWeekAppBar(BuildContext context ){
         Icons.arrow_back,
         color: Colors.white,
       ),
+    ),
+    title: Text(day,
+    style: TextStyle(
+      color: Colors.white,
+      fontFamily: "PlayfairDisplay",
+    ),
     ),
   );
 }

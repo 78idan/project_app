@@ -33,7 +33,7 @@ class lecture_book_week1_3 extends State<lecture_book_week1_2>{
   Widget build(BuildContext context ){
     return Scaffold(
       backgroundColor: Color(0xFF002147),
-      appBar: LectureBookWeekAppBar(context),
+      appBar: LectureBookWeekAppBar(context, widget.day),
       body: Padding(
         padding: EdgeInsets.all(16),
         child: SingleChildScrollView(
@@ -50,7 +50,7 @@ class lecture_book_week1_3 extends State<lecture_book_week1_2>{
 }
 
 
-PreferredSizeWidget LectureBookWeekAppBar(BuildContext context ){
+PreferredSizeWidget LectureBookWeekAppBar(BuildContext context, String day ){
   return AppBar(
     backgroundColor: Color(0xFF002147),
     leading: IconButton(
@@ -61,6 +61,12 @@ PreferredSizeWidget LectureBookWeekAppBar(BuildContext context ){
         Icons.arrow_back,
         color: Colors.white,
       ),
+    ),
+    title: Text(day,
+    style: TextStyle(
+      color: Colors.white,
+      fontFamily: "PlayfairDisplay"
+    ),
     ),
   );
 }
@@ -384,8 +390,8 @@ class lecture_bookContainer_week1_2 extends State<lecture_bookContainer_week1_1>
         // print(response.data);
         // print("Thank God");
         var DataRecieved = response.data;
-        if(DataRecieved['message'] == "Please fill Activiy"){
-          customNotification.notificationCustom(context, message: "Please fill Activiy");
+        if(DataRecieved['message'] == "Activiy not filled"){
+          customNotification.notificationCustom(context, message: "Activiy not filled");
         }else{
           if(collegeSignatureUrl == null){
             // print("Thank God first then Go");

@@ -32,7 +32,7 @@ class lecture_day1_3 extends State<lecture_day1_2>{
   Widget build(BuildContext context ){
     return Scaffold(
       backgroundColor: Color(0xFF002147),
-      appBar: LectureDayAppBar(context),
+      appBar: LectureDayAppBar(context,widget.week),
       body: Padding(
         padding: EdgeInsets.all(16),
         child: SingleChildScrollView(
@@ -49,7 +49,7 @@ class lecture_day1_3 extends State<lecture_day1_2>{
 }
 
 
-PreferredSizeWidget LectureDayAppBar(BuildContext context ){
+PreferredSizeWidget LectureDayAppBar(BuildContext context, String week ){
   return AppBar(
     backgroundColor: Color(0xFF002147),
     leading: IconButton(
@@ -60,6 +60,12 @@ PreferredSizeWidget LectureDayAppBar(BuildContext context ){
         Icons.arrow_back,
         color: Colors.white,
       ),
+    ),
+    title: Text(week,
+    style: TextStyle(
+      color: Colors.white,
+      fontFamily: "PlayfairDisplay"
+    ),
     ),
   );
 }

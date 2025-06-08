@@ -33,7 +33,7 @@ class day1_3 extends State<day1_2>{
   Widget build(BuildContext context ){
     return Scaffold(
       backgroundColor: Color(0xFF002147),
-      appBar: DayAppBar(context),
+      appBar: DayAppBar(context,widget.week),
       body: Padding(
         padding: EdgeInsets.all(16),
         child: SingleChildScrollView(
@@ -50,7 +50,7 @@ class day1_3 extends State<day1_2>{
 }
 
 
-PreferredSizeWidget DayAppBar(BuildContext context ){
+PreferredSizeWidget DayAppBar(BuildContext context, String week ){
   return AppBar(
     backgroundColor: Color(0xFF002147),
     leading: IconButton(
@@ -61,6 +61,12 @@ PreferredSizeWidget DayAppBar(BuildContext context ){
         Icons.arrow_back,
         color: Colors.white,
       ),
+    ),
+    title: Text(week,
+    style: TextStyle(
+      color: Colors.white,
+      fontFamily: "PlayfairDisplay"
+    ),
     ),
   );
 }

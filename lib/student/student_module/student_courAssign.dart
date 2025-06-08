@@ -41,7 +41,7 @@ class student_courAssign1_3 extends State<student_courAssign1_2>{
   @override  
   Widget build(BuildContext context ){
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         backgroundColor: Color(0xFF002147),
         appBar: student_courAssignAppBar(context),
@@ -54,7 +54,11 @@ class student_courAssign1_3 extends State<student_courAssign1_2>{
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
               child: course_assignment1_1(module_name: widget.module_name, IpAddress: widget.IpAddress,candidee_num: widget.candidee_num,candidee_level: widget.candidee_level,),
-            )
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+              child: notesContainer1_1(module_name: widget.module_name, IpAddress: widget.IpAddress,),
+            )            
           ],
         ),
       ),
@@ -93,7 +97,8 @@ PreferredSizeWidget student_courAssignAppBar( BuildContext context ){
       ),
       tabs: [
         Tab(text: "Courses",),
-        Tab(text: "Assignment",)
+        Tab(text: "Assignment",),
+        Tab(text: "Notes",)
       ],
     ),
   );
@@ -895,6 +900,306 @@ class course_assignment1_2 extends State<course_assignment1_1>{
     );
   }
 }
+
+
+
+class notesContainer1_1 extends StatefulWidget{
+  final String module_name;
+  final String IpAddress;
+  notesContainer1_1({ required this.module_name, required this.IpAddress  });  
+  @override
+  notesContainer1_2 createState()=> notesContainer1_2();
+}
+
+class notesContainer1_2 extends State<notesContainer1_1>{
+  List<dynamic> note_name = [];
+  List<dynamic> note_path = [];
+  List<dynamic> note_id = [];
+  String errorNote = "";
+  bool isLoading = false;
+  
+  // Add these variables for download tracking
+  Map<int, bool> isDownloading = {};
+  Map<int, double> downloadProgress = {};
+
+  @override  
+  void initState(){
+    super.initState();
+    selectNotes();
+  }
+
+  // Download function
+  Future<void> downloadFile(String url, String fileName, int index) async {
+    try {
+      // Request storage permission
+      var status = await Permission.storage.request();
+      if (status != PermissionStatus.granted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Storage permission denied')),
+        );
+        return;
+      }
+
+      setState(() {
+        isDownloading[index] = true;
+        downloadProgress[index] = 0.0;
+      });
+
+      Dio dio = Dio();
+      
+      // Get the Downloads directory
+      Directory? downloadsDirectory;
+      if (Platform.isAndroid) {
+        downloadsDirectory = Directory('/storage/emulated/0/Download');
+        if (!await downloadsDirectory.exists()) {
+          downloadsDirectory = await getExternalStorageDirectory();
+        }
+      } else {
+        downloadsDirectory = await getApplicationDocumentsDirectory();
+      }
+
+      String filePath = '${downloadsDirectory!.path}/$fileName';
+
+      await dio.download(
+        url,
+        filePath,
+        onReceiveProgress: (received, total) {
+          if (total != -1) {
+            setState(() {
+              downloadProgress[index] = received / total;
+            });
+          }
+        },
+      );
+
+      setState(() {
+        isDownloading[index] = false;
+        downloadProgress[index] = 0.0;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Downloaded: $fileName'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+    } catch (e) {
+      setState(() {
+        isDownloading[index] = false;
+        downloadProgress[index] = 0.0;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Download failed: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      print('Download error: $e');
+    }
+  }
+
+  //start selectNotes function
+  Future<void> selectNotes() async {
+    setState(() {
+      isLoading = true;
+    });
+    String Table_name = widget.module_name+"_notes";
+    try{
+      Dio dio = Dio(
+        BaseOptions(
+          connectTimeout: Duration(seconds: 15),
+          receiveTimeout: Duration(seconds: 15),
+        )
+      );
+
+      var IpAddress = widget.IpAddress;
+
+      FormData dataSend = FormData.fromMap({
+        "Table_name": Table_name,
+        "IpAddress": IpAddress
+      });
+
+      var UrlSend = "http://${IpAddress}/project_app/retrieve_note.php";
+
+      Response response = await dio.post(
+        UrlSend,
+        data:  dataSend
+      );
+
+      if(response.statusCode == 200){
+        // print(response.data);
+        var dataReceived = response.data;
+        if(dataReceived['message'] == "notes empty"){
+          setState(() {
+            errorNote = "notes empty";
+          });
+        }else{
+          var notesFile = dataReceived['note'];
+          setState(() {
+            errorNote = "";
+            for (var notesFile2 in notesFile){
+              note_name.add(notesFile2['note_name']);
+              note_path.add(notesFile2['note_path']);
+              note_id.add(notesFile2['note_id']);
+            }
+          });
+        }
+      }
+      setState(() {
+        isLoading = false;
+      });
+
+    }catch(e){
+      if(e is DioException){
+        switch(e.type){
+          case DioExceptionType.connectionTimeout:
+               print("Connection TimeOut ${e.message} ");
+               break;
+          case DioExceptionType.connectionError:
+               print("connection Error: ${e.message}");
+               break;
+          case DioExceptionType.receiveTimeout:
+               print("receieve error: ${e.message} ");
+               break;
+          case DioExceptionType.sendTimeout:
+               print("send error: ${e.message} ");
+               break;
+          case DioExceptionType.badCertificate:
+               print("bad certificate ${e.message} ");
+               break;
+          case DioExceptionType.unknown:
+               print("unknow error: ${e.message} ");
+               break;
+          case DioExceptionType.cancel:
+               print("cancel error: ${e.message} ");
+               break;
+          default:
+                print("default error: ${e.message} ");
+                break;                    
+        }
+      }else{
+        print("else error: $e");
+      }      
+    }
+  }
+  //end selectNotes function
+
+
+  @override 
+  Widget build(BuildContext context){
+    return RefreshIndicator(
+      onRefresh: () async {
+        note_name.clear();
+        note_path.clear();
+        note_id.clear();
+        await selectNotes();
+      },
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Column(
+          children: [
+            SizedBox(height: 10),
+            if(isLoading)
+              Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 1,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              )
+            else if(errorNote.isNotEmpty)
+              Center(
+                child: Text(errorNote,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: "PlayfairDisplay"
+                ),
+                ),
+              )
+            else    
+            Container(
+              height: 580,
+              decoration: BoxDecoration(),
+              child: ListView.builder(
+                itemCount: note_name.length,
+                itemBuilder: (BuildContext context, int index ){
+                  return Column(
+                    children: [
+                      Container(
+                        height: 70,
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: Color(0xFF1A3A6F),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.description,
+                              size: 25,
+                              color: Colors.white,
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    note_name[index],
+                                    style: TextStyle(color: Colors.white),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                  if (isDownloading[index] == true)
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 4),
+                                      child: LinearProgressIndicator(
+                                        value: downloadProgress[index],
+                                        backgroundColor: Colors.white24,
+                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: isDownloading[index] == true 
+                                ? null 
+                                : () {
+                                    downloadFile(
+                                      note_path[index], 
+                                      note_name[index], 
+                                      index
+                                    );
+                                  },
+                              icon: Icon(
+                                isDownloading[index] == true 
+                                  ? Icons.downloading 
+                                  : Icons.download,
+                                color: isDownloading[index] == true 
+                                  ? Colors.white54 
+                                  : Colors.white,
+                              ),
+                            )                           
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                    ],
+                  );
+                },
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 
 
 
