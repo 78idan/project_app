@@ -165,7 +165,7 @@ class student_noContainer1_2 extends State<student_noContainer1_1>{
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context)=>lecture_week1_2(IpAddress: widget.IpAddress, candidate_num: candidates_no[index])
+                      builder: (context)=>lecture_week1_2(IpAddress: widget.IpAddress, candidate_num: candidates_no[index], nameIdentity: name[index], )
                     )
                   );
                 },

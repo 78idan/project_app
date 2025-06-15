@@ -24,7 +24,9 @@ class student_dashboard1_2 extends StatefulWidget{
   final String IpAddress;
   final String candidee_num;
   final String nameIdentity;
-  student_dashboard1_2({required this.IpAddress, required this.candidee_num, required this.nameIdentity });
+  final String department;
+  final String course;
+  student_dashboard1_2({required this.IpAddress, required this.candidee_num, required this.nameIdentity, required this.department, required this.course });
   @override  
   student_dashboard1_3 createState()=> student_dashboard1_3();
 }
@@ -55,7 +57,7 @@ class student_dashboard1_3 extends State<student_dashboard1_2>{
   @override  
   Widget build(BuildContext context ){
   List pages = [
-    student_home1_2(IpAddress: IpAddress, candidee_num: candidee_num,nameIdentity: widget.nameIdentity,),
+    student_home1_2(IpAddress: IpAddress, candidee_num: candidee_num,nameIdentity: widget.nameIdentity, department: widget.department, course: widget.course,),
     student_profile1_2(IpAddress: IpAddress, candidee_num: candidee_num)
   ];    
     return Scaffold(

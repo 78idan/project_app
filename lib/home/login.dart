@@ -93,7 +93,7 @@ class form1_1 extends State<form1>{
   String ErrorText="";
   TextEditingController admissionController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  var IpAddress = "192.168.111.102";
+  var IpAddress = "192.168.243.102";
 
   bool isbscure = true;
   //starting of function of validation
@@ -142,20 +142,23 @@ class form1_1 extends State<form1>{
         // print(response.data);
         var receiveData = response.data;
         var nameIdentifier = receiveData['name'];
+        var department = receiveData['department'];
+        var course = receiveData['course'];
+        // var candidee_level = receiveData['level'];
         print(response.data);
 
         if(receiveData['message'] == "student"){
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context)=>student_dashboard1_2(IpAddress: IpAddress, candidee_num: admissionController.text,nameIdentity: nameIdentifier,)
+              builder: (context)=>student_dashboard1_2(IpAddress: IpAddress, candidee_num: admissionController.text,nameIdentity: nameIdentifier, department: department, course: course, )
             )
           );
         }else if(receiveData['message'] == "lecture"){
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context)=>lecture_dashboard2_2(IpAddress: IpAddress , admission_number: admissionController.text, )
+              builder: (context)=>lecture_dashboard2_2(IpAddress: IpAddress , admission_number: admissionController.text,  nameIdentity: nameIdentifier, department: department, )
             )
           );
         }else if(receiveData['message'] == "admin"){

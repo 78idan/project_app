@@ -22,8 +22,12 @@ import 'package:project_app/lecture_dashboard/lecture_profile.dart';
 
 class lecture_dashboard2_2 extends StatefulWidget{
   final String admission_number;
+
   final String IpAddress;
-  lecture_dashboard2_2({ required this.admission_number, required this.IpAddress });
+  final String nameIdentity;  
+  final String department;
+
+  lecture_dashboard2_2({ required this.admission_number,  required this.IpAddress, required this.nameIdentity, required this.department, });
   @override  
   lecture_dashboard2_3 createState()=> lecture_dashboard2_3();
 }
@@ -37,7 +41,7 @@ class lecture_dashboard2_3 extends State<lecture_dashboard2_2>{
   @override  
   Widget build(BuildContext context ){
   List<Widget> lecturePages = [
-    lecture_home1_2(admission_number: widget.admission_number,  IpAddress: widget.IpAddress,),
+    lecture_home1_2(admission_number: widget.admission_number,  IpAddress: widget.IpAddress,  nameIdentity: widget.nameIdentity, department: widget.department,  ),
     lecture_profile1_2(admission_number: widget.admission_number, IpAddress: widget.IpAddress)
   ];    
     return Scaffold(

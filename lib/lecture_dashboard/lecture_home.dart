@@ -21,9 +21,12 @@ import 'package:project_app/lecture_dashboard/lecture_log/lecture_name.dart';
 
 
 class lecture_home1_2 extends StatefulWidget{
-  final String admission_number;
+  final String admission_number; 
   final String IpAddress;
-  lecture_home1_2({ required this.admission_number, required this.IpAddress });
+  final String nameIdentity;  
+  final String department;
+
+  lecture_home1_2({ required this.admission_number,  required this.IpAddress, required this.nameIdentity, required this.department , });
   @override  
   lecture_home1_3 createState()=> lecture_home1_3();
 }
