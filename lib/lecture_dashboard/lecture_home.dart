@@ -3,6 +3,7 @@ import 'package:project_app/lecture_dashboard/lecture_module/lecture_module.dart
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:project_app/lecture_dashboard/lecture_log/lecture_name.dart';
+import 'package:project_app/lecture_dashboard/lecture_mark/mark_name.dart';
 // void main(){
 //   runApp(
 //     lecture_home1_1()
@@ -37,8 +38,87 @@ class lecture_home1_3 extends State<lecture_home1_2>{
   String first_name = "";
   String last_name = "";
   String role = "";
+  String markCheck = "";
+  String nameRegion = "";
 
   // String lecture_admissionNumber = "22050513037";
+
+  //start of checkingMarker function
+  Future<void> checkingMarker()async{
+    try{
+      Dio dio = Dio(
+        BaseOptions(
+          connectTimeout: Duration(seconds: 15),
+          receiveTimeout: Duration(seconds: 15),
+        )
+      );
+      var IpAddress = widget.IpAddress;
+      var dataSend = {
+        "candidate_num": widget.admission_number
+      };
+
+      var UrlSend = "http://${IpAddress}/project_app/checking_marker.php";
+
+      Response response = await dio.post(
+        UrlSend,
+        data: FormData.fromMap(dataSend)
+      );
+
+      if(response.statusCode == 200){
+        // print("Thank God");
+        // print(response.data);
+
+        var dataReceived = response.data;
+
+        if(dataReceived['message'] == "not exist"){
+          setState(() {
+            markCheck = "";
+          });
+        }else{
+          setState(() {
+            markCheck = "Available";
+            nameRegion = dataReceived['region_name'];
+          });
+        }
+
+      }
+
+    }catch(e){
+      if(e is DioException){
+        switch(e.type){
+          case DioExceptionType.connectionTimeout:
+               print("connectionTimeOut : ${e.message}");
+               break;
+          case DioExceptionType.connectionError:
+               print("connectionError: ${e.message} ");
+               break;
+          case DioExceptionType.sendTimeout:
+               print("sendTimeOut: ${e.message}");
+               break;
+          case DioExceptionType.receiveTimeout:
+               print("receive TimeOut: ${e.message} ");
+               break;
+          case DioExceptionType.badCertificate:
+               print("certificate: ${e.message} ");
+               break;
+          case DioExceptionType.badResponse:
+               print("bad response: ${e.message} ");
+               break;
+          case DioExceptionType.unknown:
+               print("Unknown error: ${e.message} ");
+               break;
+          default:
+               print("default error: ${e.message} ");
+               break;                                    
+        }
+      }else{
+        print("else error: $e");
+      }       
+    }
+  }
+  //end of checkingMarker function
+
+
   // start of check Ipt function
   Future<void> check_Ipt() async {
     String check = "hey";
@@ -80,7 +160,7 @@ class lecture_home1_3 extends State<lecture_home1_2>{
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context)=>student_no1_2(IpAddress: widget.IpAddress)
+                builder: (context)=>student_no1_2(IpAddress: widget.IpAddress, admission_number: widget.admission_number,)
               )
             );            
           }
@@ -191,7 +271,44 @@ class lecture_home1_3 extends State<lecture_home1_2>{
             ],
           ),
         ),
-      )      
+      ),
+      if(markCheck.isNotEmpty)
+        GestureDetector(
+          onTap: (){
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context)=> mark_student1_2(IpAddress: widget.IpAddress, region: nameRegion)
+              )
+            );
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Color(0xFF48C9B0),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.school,
+                  size: 50,
+                  color: Colors.white,
+                ),
+                SizedBox(height: 10,),
+                Text("Marker",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: "PlayfairDisplay",
+                  fontSize: 16,
+          
+                ),
+                textAlign: TextAlign.center,
+                )
+              ],
+            ),
+          ),
+        ),      
     ];
   }
   // end list container function
@@ -200,6 +317,7 @@ class lecture_home1_3 extends State<lecture_home1_2>{
   void initState(){
     super.initState();
     retrieveName();
+    checkingMarker();
   }
   // end initState function
 

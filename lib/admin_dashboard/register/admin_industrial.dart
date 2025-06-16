@@ -126,6 +126,7 @@ class adminIndustrialTextField1_2 extends State<adminIndustrialTextField1_1>{
   TextEditingController LectureAdmissionNumber1 = TextEditingController();
   TextEditingController LectureAdmissionNumber2 = TextEditingController();
   TextEditingController LectureAdmissionNumber3 = TextEditingController();
+  TextEditingController markerController = TextEditingController();
 
 //start of validation function
 Future<void> validateIndutrialRegister() async {
@@ -137,6 +138,8 @@ Future<void> validateIndutrialRegister() async {
      customNotification.notificationCustom(context, message: "Admission 2 empty");
   }else if(LectureAdmissionNumber3.text.isEmpty){
      customNotification.notificationCustom(context, message: "Admission 3 empty");
+  }else if(markerController.text.isEmpty){
+     customNotification.notificationCustom(context, message: "marker is empty");
   }else {
     await  registerIndustrial();
   }
@@ -160,6 +163,7 @@ Future<void> registerIndustrial() async{
           "LectureAdmissionNumber1": LectureAdmissionNumber1.text,
           "LectureAdmissionNumber2": LectureAdmissionNumber2.text,
           "LectureAdmissionNumber3": LectureAdmissionNumber3.text,
+          "marker": markerController.text,
         };
         // print(departmentValue);
         Response response = await dio.post(
@@ -173,12 +177,14 @@ Future<void> registerIndustrial() async{
           if (dataReceived['message'] == "supervisors enrolled"){
             LectureAdmissionNumber1.clear();
             LectureAdmissionNumber2.clear();
-            LectureAdmissionNumber3.clear();           
+            LectureAdmissionNumber3.clear(); 
+            markerController.clear();          
             customNotification.notificationCustom(context, message: dataReceived['message'],picIcon: Icon(Icons.check_circle,color: Colors.white,size: 14,));
           }else{
             LectureAdmissionNumber1.clear();
             LectureAdmissionNumber2.clear();
-            LectureAdmissionNumber3.clear();             
+            LectureAdmissionNumber3.clear();   
+            markerController.clear();          
             customNotification.notificationCustom(context, message: dataReceived['message']);
           }
         }
@@ -377,7 +383,34 @@ Future<void> registerIndustrial() async{
                       color: Colors.grey[400],
                     )
                   ),
-                ),                 
+                ),
+                SizedBox(height: 10,),
+                TextFormField(
+                  controller: markerController,
+                  style: TextStyle(
+                    color: Colors.white
+                  ),
+                  decoration: InputDecoration(
+                    hintText: "Marker",
+                    hintStyle: TextStyle(
+                      color: Colors.white70
+                    ),
+                    fillColor: Color(0xFF1A3A6F),
+                    filled: true,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none
+                    ),
+                    prefixIcon: Icon(
+                      Icons.person,
+                      color: Colors.grey[400],
+                    )
+                  ),
+                ),                
                 SizedBox(height: 15,),                              
                 Row(
                   children: [

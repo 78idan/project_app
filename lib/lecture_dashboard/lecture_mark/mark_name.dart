@@ -3,40 +3,40 @@ import 'package:project_app/lecture_dashboard/lecture_log/lecture_week.dart';
 import "package:dio/dio.dart";
 
 // void main(){
-//   runApp(student_no1_1());
+//   runApp(mark_student1_1());
 // }
 
-// class student_no1_1 extends StatelessWidget{
+// class mark_student1_1 extends StatelessWidget{
 //   @override  
 //   Widget build(BuildContext context ){
 //     return MaterialApp(
 //       debugShowCheckedModeBanner: false,
-//       home: student_no1_2(),
+//       home: mark_student1_2(),
 //     );
 //   }
 // }
 
-class student_no1_2 extends StatefulWidget{
+class mark_student1_2 extends StatefulWidget{
   final String IpAddress;
-  final String admission_number;
-  student_no1_2({required this.IpAddress, required this.admission_number });
+  final String region;
+  mark_student1_2({required this.IpAddress, required this.region });
   @override  
-  student_no1_3 createState()=> student_no1_3();
+  mark_student1_3 createState()=> mark_student1_3();
 }
 
-class student_no1_3 extends State<student_no1_2>{
+class mark_student1_3 extends State<mark_student1_2>{
   @override  
   Widget build(BuildContext context ){
     return Scaffold(
       backgroundColor: Color(0xFF002147),
-      appBar: StudentNoAppBar(context),
+      appBar: markStudentAppBar(context),
       body: Padding(
         padding: EdgeInsets.all(16),
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
-              student_noContainer1_1(IpAddress: widget.IpAddress,admission_number: widget.admission_number,)
+              mark_studentContainer1_1(IpAddress: widget.IpAddress, region: widget.region,)
             ],
           ),
         ),
@@ -46,7 +46,7 @@ class student_no1_3 extends State<student_no1_2>{
 }
 
 
-PreferredSizeWidget StudentNoAppBar(BuildContext context ){
+PreferredSizeWidget markStudentAppBar(BuildContext context ){
   return AppBar(
     backgroundColor: Color(0xFF002147),
     leading: IconButton(
@@ -61,16 +61,16 @@ PreferredSizeWidget StudentNoAppBar(BuildContext context ){
   );
 }
 
-class student_noContainer1_1 extends StatefulWidget{
+class mark_studentContainer1_1 extends StatefulWidget{
   final String IpAddress;
-  final String admission_number;
-  student_noContainer1_1({required this.IpAddress, required this.admission_number });  
+  final String region;
+  mark_studentContainer1_1({required this.IpAddress, required this.region });  
   @override  
-  student_noContainer1_2 createState()=> student_noContainer1_2();
+  mark_studentContainer1_2 createState()=> mark_studentContainer1_2();
 }
 
 
-class student_noContainer1_2 extends State<student_noContainer1_1>{
+class mark_studentContainer1_2 extends State<mark_studentContainer1_1>{
   var candidates_no = [];
   var name = [];
   // start of void function
@@ -89,12 +89,12 @@ class student_noContainer1_2 extends State<student_noContainer1_1>{
            receiveTimeout: Duration(seconds: 15)
         )
       );
-      // String region = "Arusha";
+      String region = widget.region;
       var IpAddress = widget.IpAddress;
       var dataSent = {
-        "candidate_num": widget.admission_number
+        "region": region
       };
-      var UrlSent = "http://${IpAddress}/project_app/lecture_name.php";
+      var UrlSent = "http://${IpAddress}/project_app/mark_name.php";
       Response response = await dio.post(
         UrlSent,
         data: FormData.fromMap(dataSent)
@@ -150,7 +150,7 @@ class student_noContainer1_2 extends State<student_noContainer1_1>{
         // color: Colors.red
       ),
       child: candidates_no.isEmpty
-      ? Center(child: Text("No student reported",
+      ? Center(child: Text("No student details",
       style: TextStyle(
         fontFamily: "PlayfairDisplay",
         color: Colors.white
