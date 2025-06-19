@@ -443,7 +443,7 @@ class lecture_home1_3 extends State<lecture_home1_2>{
             left: 16,
             
             child: Container(
-              height: 300,
+              height: 400,
               child: GridView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

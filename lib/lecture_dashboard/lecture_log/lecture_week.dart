@@ -263,7 +263,7 @@ class markContainer1_2 extends State<markContainer1_1>{
 
     dailyController.addListener((){
       final dailyInput = double.tryParse(dailyController.text);
-      if( dailyInput == null || dailyInput < 0 || dailyInput > 10){
+      if( dailyInput == null || dailyInput < 0 || dailyInput > 15){
         setState(() {
           dailyText = "Invalid number";
         });
@@ -276,7 +276,7 @@ class markContainer1_2 extends State<markContainer1_1>{
 
     weeklyController.addListener((){
       final weeklyInput = double.tryParse(weeklyController.text);
-      if( weeklyInput == null || weeklyInput < 0 || weeklyInput > 10){
+      if( weeklyInput == null || weeklyInput < 0 || weeklyInput > 15){
         setState(() {
           weeklyText = "Invalid number";
         });
@@ -504,6 +504,19 @@ class markContainer1_2 extends State<markContainer1_1>{
             viewController.clear();
             dateController.clear();
             customNotification.notificationCustom(context, message: 'submitted',picIcon: Icon(Icons.check,color: Colors.white,size: 14,));
+            abilityText = "";
+            workText = "";
+            wellText = "";
+            attitudeText = "";  
+            goodText = "";
+            neatText = "";
+            understandText = "";
+            writtenText = "";
+            expressText = "";
+            interestText = "";
+            dailyText = "";
+            weeklyText = "";
+            totalText= "";            
             retrievingMarks();            
           });
 
@@ -532,6 +545,19 @@ class markContainer1_2 extends State<markContainer1_1>{
             viewController.clear();
             dateController.clear();
             customNotification.notificationCustom(context, message: 'You can`t submit',); 
+            abilityText = "";
+            workText = "";
+            wellText = "";
+            attitudeText = "";  
+            goodText = "";
+            neatText = "";
+            understandText = "";
+            writtenText = "";
+            expressText = "";
+            interestText = "";
+            dailyText = "";
+            weeklyText = "";
+            totalText= "";            
             retrievingMarks();            
           });
          
@@ -1913,7 +1939,7 @@ class markContainer1_2 extends State<markContainer1_1>{
                           hintStyle: TextStyle(
                             color: Colors.white,
                             fontFamily: "PlayfairDisplay"
-                          ),                                                   
+                          ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide.none
@@ -2178,7 +2204,7 @@ class markContainer1_2 extends State<markContainer1_1>{
                         decoration: InputDecoration(
                           fillColor: Color(0xFF1A3A6F),
                           filled: true,                          
-                          hintText: "10",
+                          hintText: "15",
                           hintStyle: TextStyle(
                             color: Colors.white,
                             fontFamily: "PlayfairDisplay"
@@ -2205,7 +2231,7 @@ class markContainer1_2 extends State<markContainer1_1>{
                         decoration: InputDecoration(
                           fillColor: Color(0xFF1A3A6F),
                           filled: true,
-                          hintText: "<10",
+                          hintText: "<15",
                           hintStyle: TextStyle(
                             color: Colors.white,
                             fontFamily: "PlayfairDisplay"
@@ -2278,7 +2304,7 @@ class markContainer1_2 extends State<markContainer1_1>{
                         decoration: InputDecoration(
                           fillColor: Color(0xFF1A3A6F),
                           filled: true,                          
-                          hintText: "10",
+                          hintText: "15",
                           hintStyle: TextStyle(
                             color: Colors.white,
                             fontFamily: "PlayfairDisplay"
@@ -2305,7 +2331,7 @@ class markContainer1_2 extends State<markContainer1_1>{
                         decoration: InputDecoration(
                           fillColor: Color(0xFF1A3A6F),
                           filled: true,
-                          hintText: "<10",
+                          hintText: "<15",
                           hintStyle: TextStyle(
                             color: Colors.white,
                             fontFamily: "PlayfairDisplay"
@@ -2378,7 +2404,7 @@ class markContainer1_2 extends State<markContainer1_1>{
                         decoration: InputDecoration(
                           fillColor: Color(0xFF1A3A6F),
                           filled: true,                          
-                          hintText: "20",
+                          hintText: "30",
                           hintStyle: TextStyle(
                             color: Colors.white,
                             fontFamily: "PlayfairDisplay"
@@ -2438,7 +2464,7 @@ class markContainer1_2 extends State<markContainer1_1>{
                         decoration: BoxDecoration(
                           // color: Colors.red
                         ),
-                        height: 24,
+                        height: 40,
                         child: Text("1 What is the student experiencing(other than financlial problems)",
                         style: TextStyle(
                           color: Colors.white,
@@ -2476,7 +2502,7 @@ class markContainer1_2 extends State<markContainer1_1>{
                         decoration: BoxDecoration(
                           // color: Colors.red
                         ),
-                        height: 24,
+                        height: 40,
                         child: Text("2 What problems is the management getting from the student",
                         style: TextStyle(
                           color: Colors.white,

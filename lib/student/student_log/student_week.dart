@@ -1098,6 +1098,17 @@ class markContainer1_2 extends State<markContainer1_1>{
             opinionAdequacyController.clear();
             dateController.clear();
             customNotification.notificationCustom(context, message: 'submitted',picIcon: Icon(Icons.check,color: Colors.white,size: 14,));
+            abilityText = "";
+            selectionText = "";
+            excecutionText = "";
+            finishedText = "";  
+            selfText = "";
+            cooperationText = "";
+            attendanceText = "";
+            obedienceText = "";
+            initiativeText= "";
+            willingText= "";
+            totalText= "";            
             retrievingStudentMarks();            
           });
 
@@ -1124,6 +1135,17 @@ class markContainer1_2 extends State<markContainer1_1>{
             opinionAdequacyController.clear();
             dateController.clear();
             customNotification.notificationCustom(context, message: 'You can`t submit',); 
+            abilityText = "";
+            selectionText = "";
+            excecutionText = "";
+            finishedText = "";  
+            selfText = "";
+            cooperationText = "";
+            attendanceText = "";
+            obedienceText = "";
+            initiativeText= "";
+            willingText= "";
+            totalText= "";            
             retrievingStudentMarks();             
           });
          

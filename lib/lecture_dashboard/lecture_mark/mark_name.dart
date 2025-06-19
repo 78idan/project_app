@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:project_app/lecture_dashboard/lecture_log/lecture_week.dart';
+// import 'package:project_app/lecture_dashboard/lecture_log/lecture_week.dart';
 import "package:dio/dio.dart";
+import 'package:project_app/lecture_dashboard/lecture_mark/mark_lecture.dart';
 
 // void main(){
 //   runApp(mark_student1_1());
@@ -167,7 +168,7 @@ class mark_studentContainer1_2 extends State<mark_studentContainer1_1>{
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context)=>lecture_week1_2(IpAddress: widget.IpAddress, candidate_num: candidates_no[index], nameIdentity: name[index], )
+                      builder: (context)=>markLecture1_2(IpAddress: widget.IpAddress, candidate_num: candidates_no[index])
                     )
                   );
                 },
